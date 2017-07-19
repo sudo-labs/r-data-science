@@ -12,8 +12,8 @@ googleAnalytics = ""
 	name = "HPC R"
 	description = "Making your R code just a little bit faster..."
 
-	github_user   = "digitalcraftsman"
-	github_repo   = "hugo-alabaster-theme"
+	github_user   = "jstaf"
+	github_repo   = "hpc-r"
 	github_banner = false
 
 	custom_css = []
@@ -26,7 +26,7 @@ googleAnalytics = ""
 	logo = "favicon.ico"
 
 
-	github_button  = true
+	github_button  = false
 	travis_button  = false
 	codecov_button = false
 	gratipay = ""

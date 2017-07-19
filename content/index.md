@@ -1,21 +1,34 @@
 ---
 date: 2016-04-23T15:21:22+02:00
-title: Foreword
+title: High-performance R
 type: homepage
 menu: main
 weight: 0
 ---
 
-## What is Alabaster?
+R is not a fast language. But we can make it faster. 
+This tutorial covers a number of techniques we can use to parallelize and speed 
+up our code.
+A lot of the material is borrowed from Hadley Wickham's 
+"[Advanced R](http://adv-r.had.co.nz/)" book.
 
-[Alabaster](https://github.com/bitprophet/alabaster) was originally a theme for the popular documentation tool [Sphinx](http://www.sphinx-doc.org/en/stable/). This theme port to Hugo theme is all about documentations. It should allow you to easily create a documentation for your projects.
+In particular, this workshop combines a review of basic R syntax 
+(making sure everyone is up to speed) with more advanced R concepts. 
+Topics covered include the following:
 
-[Fabric](http://www.fabfile.org/) and [Invoke](http://www.pyinvoke.org/) are two examples of the Alabaster theme in the wild.
+* Basic R syntax
+* Doing work with the "tidyverse" packages
+* Common performance optimizations
+* Parallelization with `doParallel` and `plyr`
+* Parallelization of `dplyr` using `multidplyr`
+* Serial farming strategies
+* Writing executable R scripts with `argparse`
 
-The following pages will guide you through the setup, introduce you to the very basics of [Hugo](https://gohugo.io) and show you the capabilities of this theme. Have a look at the [Roadmap]({{< relref "roadmap/index.md" >}}) if you're curious about what comes next.
+## Setup
 
-## Acknowledgements
+Before you start, make sure you have both [R](https://www.r-project.org/) and 
+[RStudio](https://www.rstudio.com/) installed and ready to go. 
 
-Last but not I want to give a big shout-out to [Jeff Forcier](https://github.com/bitprophet), [Kenneth Reitz](https://github.com/kennethreitz) and [Armin Ronacher](https://github.com/mitsuhiko). Their work and modifications on the original codebase made this port possible.
+You may also wish to install the [tidyverse](http://tidyverse.org/) packages
+with `install.packages("tidyverse")` beforehand. We'll be using them a lot.
 
-Furthermore, thanks to [Steve Francia](https://gihub.com/spf13) for creating Hugo and the [awesome community](https://github.com/spf13/hugo/graphs/contributors) around the project.

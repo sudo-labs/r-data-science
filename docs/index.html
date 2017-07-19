@@ -24,22 +24,36 @@
 					<div class="body" role="main">
 						
 	
-		<h1>Foreword</h1>
+		<h1>High-performance R</h1>
 		
 
-<h2 id="what-is-alabaster">What is Alabaster?</h2>
+<p>R is not a fast language. But we can make it faster.
+This tutorial covers a number of techniques we can use to parallelize and speed
+up our code.
+A lot of the material is borrowed from Hadley Wickham&rsquo;s
+&ldquo;<a href="http://adv-r.had.co.nz/">Advanced R</a>&rdquo; book.</p>
 
-<p><a href="https://github.com/bitprophet/alabaster">Alabaster</a> was originally a theme for the popular documentation tool <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a>. This theme port to Hugo theme is all about documentations. It should allow you to easily create a documentation for your projects.</p>
+<p>In particular, this workshop combines a review of basic R syntax
+(making sure everyone is up to speed) with more advanced R concepts.
+Topics covered include the following:</p>
 
-<p><a href="http://www.fabfile.org/">Fabric</a> and <a href="http://www.pyinvoke.org/">Invoke</a> are two examples of the Alabaster theme in the wild.</p>
+<ul>
+<li>Basic R syntax</li>
+<li>Doing work with the &ldquo;tidyverse&rdquo; packages</li>
+<li>Common performance optimizations</li>
+<li>Parallelization with <code>doParallel</code> and <code>plyr</code></li>
+<li>Parallelization of <code>dplyr</code> using <code>multidplyr</code></li>
+<li>Serial farming strategies</li>
+<li>Writing executable R scripts with <code>argparse</code></li>
+</ul>
 
-<p>The following pages will guide you through the setup, introduce you to the very basics of <a href="https://gohugo.io">Hugo</a> and show you the capabilities of this theme. Have a look at the <a href="/hpc-r/roadmap/">Roadmap</a> if you&rsquo;re curious about what comes next.</p>
+<h2 id="setup">Setup</h2>
 
-<h2 id="acknowledgements">Acknowledgements</h2>
+<p>Before you start, make sure you have both <a href="https://www.r-project.org/">R</a> and
+<a href="https://www.rstudio.com/">RStudio</a> installed and ready to go.</p>
 
-<p>Last but not I want to give a big shout-out to <a href="https://github.com/bitprophet">Jeff Forcier</a>, <a href="https://github.com/kennethreitz">Kenneth Reitz</a> and <a href="https://github.com/mitsuhiko">Armin Ronacher</a>. Their work and modifications on the original codebase made this port possible.</p>
-
-<p>Furthermore, thanks to <a href="https://gihub.com/spf13">Steve Francia</a> for creating Hugo and the <a href="https://github.com/spf13/hugo/graphs/contributors">awesome community</a> around the project.</p>
+<p>You may also wish to install the <a href="http://tidyverse.org/">tidyverse</a> packages
+with <code>install.packages(&quot;tidyverse&quot;)</code> beforehand. We&rsquo;ll be using them a lot.</p>
 
 	
 
@@ -62,10 +76,7 @@
 
 		
 
-	<p>
-		<iframe src="https://ghbtns.com/github-btn.html?user=digitalcraftsman&repo=hugo-alabaster-theme&type=watch&count=true&size=large"
-		allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-	</p>
+	
 
 	
 
@@ -90,7 +101,7 @@
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/">Foreword</a>
+		<a class="reference internal" href="/hpc-r/">High-performance R</a>
 	</li>
 	
 </ul>

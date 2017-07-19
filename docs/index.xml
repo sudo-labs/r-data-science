@@ -45,14 +45,13 @@ Planned features Localization Currently, it is possible to collect all strings i
     </item>
     
     <item>
-      <title>Foreword</title>
+      <title>High-performance R</title>
       <link>/hpc-r/</link>
       <pubDate>Sat, 23 Apr 2016 15:21:22 +0200</pubDate>
       
       <guid>/hpc-r/</guid>
-      <description>What is Alabaster? Alabaster was originally a theme for the popular documentation tool Sphinx. This theme port to Hugo theme is all about documentations. It should allow you to easily create a documentation for your projects.
-Fabric and Invoke are two examples of the Alabaster theme in the wild.
-The following pages will guide you through the setup, introduce you to the very basics of Hugo and show you the capabilities of this theme.</description>
+      <description>R is not a fast language. But we can make it faster. This tutorial covers a number of techniques we can use to parallelize and speed up our code. A lot of the material is borrowed from Hadley Wickham&amp;rsquo;s &amp;ldquo;Advanced R&amp;rdquo; book.
+In particular, this workshop combines a review of basic R syntax (making sure everyone is up to speed) with more advanced R concepts. Topics covered include the following:</description>
     </item>
     
     <item>
