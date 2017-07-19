@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>HPC R</title>
-    <link>/</link>
+    <link>/hpc-r/</link>
     <description>Recent content on HPC R</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 23 Apr 2016 15:57:19 +0200</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/hpc-r/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Getting Started</title>
-      <link>/getting-started/</link>
+      <link>/hpc-r/getting-started/</link>
       <pubDate>Sat, 23 Apr 2016 15:57:19 +0200</pubDate>
       
-      <guid>/getting-started/</guid>
+      <guid>/hpc-r/getting-started/</guid>
       <description>Installation Install Hugo Hugo itself is just a single binary without dependencies on expensive runtimes like Ruby, Python or PHP and without dependencies on any databases.
 Note
 Currently, this theme makes use of features that will be part of the Hugo v0.16 release. You have to compile the latest developement version yourself.
@@ -25,10 +25,10 @@ Currently, this theme makes use of features that will be part of the Hugo v0.16 
     
     <item>
       <title>Adding content</title>
-      <link>/adding-content/</link>
+      <link>/hpc-r/adding-content/</link>
       <pubDate>Sat, 23 Apr 2016 20:26:34 +0200</pubDate>
       
-      <guid>/adding-content/</guid>
+      <guid>/hpc-r/adding-content/</guid>
       <description>Hello world Let&amp;rsquo;s create our first content file for your documentation. Open a terminal and add the following command for each new file you want to add. Replace &amp;lt;section-name&amp;gt; with a general term that describes your document in detail.
 hugo new &amp;lt;section-name&amp;gt;/filename.md  Visitors of your website will find the final document under www.example.com/&amp;lt;section-name&amp;gt;/filename/.
 Since it&amp;rsquo;s possible to have multiple content files in the same section I recommend to create at least one index.</description>
@@ -36,20 +36,20 @@ Since it&amp;rsquo;s possible to have multiple content files in the same section
     
     <item>
       <title>Roadmap</title>
-      <link>/roadmap/</link>
+      <link>/hpc-r/roadmap/</link>
       <pubDate>Sat, 23 Apr 2016 20:08:11 +0100</pubDate>
       
-      <guid>/roadmap/</guid>
+      <guid>/hpc-r/roadmap/</guid>
       <description>Quo vadis? The port of the original Alabaster theme has replicated nearly all of its features. A few are still missing, but I&amp;rsquo;ve good news: the Hugo community is actively working on this issues. Maybe with the next release of Hugo we can abandon this list. Stay tuned.
 Planned features Localization Currently, it is possible to collect all strings in a single place for easy customization. However, this only enables you to define all strings in a single language.</description>
     </item>
     
     <item>
       <title>Foreword</title>
-      <link>/</link>
+      <link>/hpc-r/</link>
       <pubDate>Sat, 23 Apr 2016 15:21:22 +0200</pubDate>
       
-      <guid>/</guid>
+      <guid>/hpc-r/</guid>
       <description>What is Alabaster? Alabaster was originally a theme for the popular documentation tool Sphinx. This theme port to Hugo theme is all about documentations. It should allow you to easily create a documentation for your projects.
 Fabric and Invoke are two examples of the Alabaster theme in the wild.
 The following pages will guide you through the setup, introduce you to the very basics of Hugo and show you the capabilities of this theme.</description>
@@ -57,10 +57,10 @@ The following pages will guide you through the setup, introduce you to the very 
     
     <item>
       <title>Hello R Markdown</title>
-      <link>/post/2015-07-23-r-rmarkdown/</link>
+      <link>/hpc-r/post/2015-07-23-r-rmarkdown/</link>
       <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
       
-      <guid>/post/2015-07-23-r-rmarkdown/</guid>
+      <guid>/hpc-r/post/2015-07-23-r-rmarkdown/</guid>
       <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
 You can embed an R code chunk like this:
 summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
