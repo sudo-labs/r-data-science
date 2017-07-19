@@ -1,0 +1,38 @@
+baseurl = "/"
+languageCode = "en-us"
+metadataformat = "yaml"
+title = "HPC R"
+theme = "hugo-alabaster-theme"
+publishDir = "docs"
+
+disqusShortname = ""
+googleAnalytics = ""
+
+[params]
+	name = "HPC R"
+	description = "Making your R code just a little bit faster..."
+
+	github_user   = "digitalcraftsman"
+	github_repo   = "hugo-alabaster-theme"
+	github_banner = false
+
+	custom_css = []
+	custom_js  = []
+
+	highlightjs = "css/highlight.css"
+	favicon = "favicon.ico"
+
+[params.sidebar]
+	logo = "favicon.ico"
+
+
+	github_button  = true
+	travis_button  = false
+	codecov_button = false
+	gratipay = ""
+
+	show_relations = true
+
+[params.footer]
+	copyright = "[Jeff Stafford](https://github.com/jstaf)"
+	show_powered_by = true
