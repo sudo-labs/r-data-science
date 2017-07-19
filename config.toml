@@ -8,6 +8,10 @@ publishDir = "docs"
 disqusShortname = ""
 googleAnalytics = ""
 
+[[menu.main]]
+  name = "Basic syntax"
+  url =  "/basics/"
+
 [params]
 	name = "HPC R"
 	description = "Making your R code just a little bit faster..."
@@ -31,7 +35,7 @@ googleAnalytics = ""
 	codecov_button = false
 	gratipay = ""
 
-	show_relations = true
+	show_relations = false
 
 [params.footer]
 	copyright = "[Jeff Stafford](https://github.com/jstaf)"

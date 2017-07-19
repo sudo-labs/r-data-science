@@ -3,39 +3,12 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/hpc-r/getting-started/</loc>
-    <lastmod>2016-04-23T15:57:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/adding-content/</loc>
-    <lastmod>2016-04-23T20:26:34+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/roadmap/</loc>
-    <lastmod>2016-04-23T20:08:11+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/post/test/</loc>
-    <lastmod>2017-07-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/hpc-r/</loc>
     <lastmod>2016-04-23T15:21:22+02:00</lastmod>
   </url>
   
   <url>
-    <loc>/hpc-r/post/2015-07-23-r-rmarkdown/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/adding-content/</loc>
-    <lastmod>2016-04-23T20:26:34+02:00</lastmod>
-    <priority>0</priority>
+    <loc>/hpc-r/basics/</loc>
   </url>
   
   <url>
@@ -44,70 +17,14 @@
   </url>
   
   <url>
-    <loc>/hpc-r/getting-started/</loc>
-    <lastmod>2016-04-23T15:57:19+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/hpc-r/</loc>
-    <lastmod>2016-04-23T15:57:19+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/lessons/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/tags/plot/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/post/</loc>
-    <lastmod>2017-07-19T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/categories/r/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/lessons/01-basics/</loc>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/tags/r-markdown/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/tags/regression/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/roadmap/</loc>
-    <lastmod>2016-04-23T20:08:11+01:00</lastmod>
+    <lastmod>2016-04-23T15:21:22+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/hpc-r/tags/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/post/another/</loc>
   </url>
   
 </urlset>

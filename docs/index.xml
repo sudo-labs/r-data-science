@@ -6,54 +6,10 @@
     <description>Recent content on HPC R</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Apr 2016 15:57:19 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 23 Apr 2016 15:21:22 +0200</lastBuildDate>
     
 	<atom:link href="/hpc-r/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Getting Started</title>
-      <link>/hpc-r/getting-started/</link>
-      <pubDate>Sat, 23 Apr 2016 15:57:19 +0200</pubDate>
-      
-      <guid>/hpc-r/getting-started/</guid>
-      <description>Installation Install Hugo Hugo itself is just a single binary without dependencies on expensive runtimes like Ruby, Python or PHP and without dependencies on any databases.
-Note
-Currently, this theme makes use of features that will be part of the Hugo v0.16 release. You have to compile the latest developement version yourself.
- Let&amp;rsquo;s make sure Hugo is set up as expected. You should see a similar version number in your terminal:</description>
-    </item>
-    
-    <item>
-      <title>Adding content</title>
-      <link>/hpc-r/adding-content/</link>
-      <pubDate>Sat, 23 Apr 2016 20:26:34 +0200</pubDate>
-      
-      <guid>/hpc-r/adding-content/</guid>
-      <description>Hello world Let&amp;rsquo;s create our first content file for your documentation. Open a terminal and add the following command for each new file you want to add. Replace &amp;lt;section-name&amp;gt; with a general term that describes your document in detail.
-hugo new &amp;lt;section-name&amp;gt;/filename.md  Visitors of your website will find the final document under www.example.com/&amp;lt;section-name&amp;gt;/filename/.
-Since it&amp;rsquo;s possible to have multiple content files in the same section I recommend to create at least one index.</description>
-    </item>
-    
-    <item>
-      <title>Roadmap</title>
-      <link>/hpc-r/roadmap/</link>
-      <pubDate>Sat, 23 Apr 2016 20:08:11 +0100</pubDate>
-      
-      <guid>/hpc-r/roadmap/</guid>
-      <description>Quo vadis? The port of the original Alabaster theme has replicated nearly all of its features. A few are still missing, but I&amp;rsquo;ve good news: the Hugo community is actively working on this issues. Maybe with the next release of Hugo we can abandon this list. Stay tuned.
-Planned features Localization Currently, it is possible to collect all strings in a single place for easy customization. However, this only enables you to define all strings in a single language.</description>
-    </item>
-    
-    <item>
-      <title>test</title>
-      <link>/hpc-r/post/test/</link>
-      <pubDate>Wed, 19 Jul 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/hpc-r/post/test/</guid>
-      <description>Does this work?
-5 + 4 ## [1] 9 Maybe?
-library(ggplot2) ggplot() + geom_point(aes(x=1:10, y=1:10)) </description>
-    </item>
     
     <item>
       <title>High-performance R</title>
@@ -66,34 +22,14 @@ In particular, this workshop combines a review of basic R syntax (making sure ev
     </item>
     
     <item>
-      <title>Hello R Markdown</title>
-      <link>/hpc-r/post/2015-07-23-r-rmarkdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
-      
-      <guid>/hpc-r/post/2015-07-23-r-rmarkdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
-    </item>
-    
-    <item>
-      <title>R Basics Review</title>
-      <link>/hpc-r/lessons/01-basics/</link>
+      <title>Basic Syntax</title>
+      <link>/hpc-r/basics/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/hpc-r/lessons/01-basics/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-When you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min.</description>
-    </item>
-    
-    <item>
-      <title>another</title>
-      <link>/hpc-r/post/another/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/hpc-r/post/another/</guid>
-      <description>print(&amp;#39;please work&amp;#39;) ## [1] &amp;quot;please work&amp;quot; import numpy as np a = np.array([4, 5, 6]) a + 4 print(a + 4) ## [ 8 9 10] </description>
+      <guid>/hpc-r/basics/</guid>
+      <description>Test with R…
+print(&amp;#39;if this works i will be so very happy lol&amp;#39;) library(gapminder) head(gap) And a test with python…
+import numpy as np a = np.array([1, 2, 3, 4, 6]) print(a * a) </description>
     </item>
     
   </channel>
