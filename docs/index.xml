@@ -45,6 +45,17 @@ Planned features Localization Currently, it is possible to collect all strings i
     </item>
     
     <item>
+      <title>test</title>
+      <link>/hpc-r/post/test/</link>
+      <pubDate>Wed, 19 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/post/test/</guid>
+      <description>Does this work?
+5 + 4 ## [1] 9 Maybe?
+library(ggplot2) ggplot() + geom_point(aes(x=1:10, y=1:10)) </description>
+    </item>
+    
+    <item>
       <title>High-performance R</title>
       <link>/hpc-r/</link>
       <pubDate>Sat, 23 Apr 2016 15:21:22 +0200</pubDate>
@@ -63,6 +74,26 @@ In particular, this workshop combines a review of basic R syntax (making sure ev
       <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
 You can embed an R code chunk like this:
 summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+    </item>
+    
+    <item>
+      <title>R Basics Review</title>
+      <link>/hpc-r/lessons/01-basics/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/lessons/01-basics/</guid>
+      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+When you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+summary(cars) ## speed dist ## Min.</description>
+    </item>
+    
+    <item>
+      <title>another</title>
+      <link>/hpc-r/post/another/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/post/another/</guid>
+      <description>print(&amp;#39;please work&amp;#39;) ## [1] &amp;quot;please work&amp;quot; import numpy as np a = np.array([4, 5, 6]) a + 4 print(a + 4) ## [ 8 9 10] </description>
     </item>
     
   </channel>
