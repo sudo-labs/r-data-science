@@ -1,4 +1,4 @@
-baseurl = "https://jstaf.github.io/hpc-r"
+baseurl = "https://jstaf.github.io/hpc-r/"
 languageCode = "en-us"
 metadataformat = "yaml"
 title = "HPC R"
