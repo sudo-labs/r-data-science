@@ -6,9 +6,11 @@ menu: main
 weight: 0
 ---
 
-R is not a fast language. But we can make it faster. 
+R is not a fast language. But we can make it work extremely effectively 
+if we know how.
 This tutorial covers a number of techniques we can use to parallelize and speed 
-up our code.
+up our code, in addition to a couple other useful tricks we can use in our
+research.
 A lot of the material is borrowed from Hadley Wickham's 
 "[Advanced R](http://adv-r.had.co.nz/)" book.
 
@@ -17,12 +19,13 @@ In particular, this workshop combines a review of basic R syntax
 Topics covered include the following:
 
 * Basic R syntax
-* Doing work with the "tidyverse" packages
+* Doing work with the "tidyverse" packages (`dplyr`, `purrr`, `ggplot2`)
 * Common performance optimizations
 * Parallelization with `doParallel` and `plyr`
 * Parallelization of `dplyr` using `multidplyr`
 * Serial farming strategies
-* Writing executable R scripts with `argparse`
+* Making reproducible reports with `rmarkdown`
+* Writing R packages with `devtools`, `testthat`, and `roxygen2`
 
 ## Setup
 

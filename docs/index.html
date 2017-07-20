@@ -5,9 +5,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 	<meta name="description" content="Making your R code just a little bit faster...">
-	<meta name="generator" content="Hugo 0.25.1" />
+	<meta name="generator" content="Hugo 0.24.1" />
 	
-	<title> HPC R</title>
+	<title>High-performance R &mdash; HPC R</title>
 	
 	<link rel="stylesheet" href="/hpc-r/css/alabaster.css" type="text/css" />
 	<link rel="stylesheet" href="/hpc-r/css/highlight.css" type="text/css" />
@@ -23,13 +23,15 @@
 				<div class="bodywrapper">
 					<div class="body" role="main">
 						
+	<h1>High-performance R</h1>
 	
-		<h1>High-performance R</h1>
-		
+	
 
-<p>R is not a fast language. But we can make it faster.
+<p>R is not a fast language. But we can make it work extremely effectively
+if we know how.
 This tutorial covers a number of techniques we can use to parallelize and speed
-up our code.
+up our code, in addition to a couple other useful tricks we can use in our
+research.
 A lot of the material is borrowed from Hadley Wickham&rsquo;s
 &ldquo;<a href="http://adv-r.had.co.nz/">Advanced R</a>&rdquo; book.</p>
 
@@ -39,12 +41,13 @@ Topics covered include the following:</p>
 
 <ul>
 <li>Basic R syntax</li>
-<li>Doing work with the &ldquo;tidyverse&rdquo; packages</li>
+<li>Doing work with the &ldquo;tidyverse&rdquo; packages (<code>dplyr</code>, <code>purrr</code>, <code>ggplot2</code>)</li>
 <li>Common performance optimizations</li>
 <li>Parallelization with <code>doParallel</code> and <code>plyr</code></li>
 <li>Parallelization of <code>dplyr</code> using <code>multidplyr</code></li>
 <li>Serial farming strategies</li>
-<li>Writing executable R scripts with <code>argparse</code></li>
+<li>Making reproducible reports with <code>rmarkdown</code></li>
+<li>Writing R packages with <code>devtools</code>, <code>testthat</code>, and <code>roxygen2</code></li>
 </ul>
 
 <h2 id="setup">Setup</h2>
@@ -55,7 +58,6 @@ Topics covered include the following:</p>
 <p>You may also wish to install the <a href="http://tidyverse.org/">tidyverse</a> packages
 with <code>install.packages(&quot;tidyverse&quot;)</code> beforehand. We&rsquo;ll be using them a lot.</p>
 
-	
 
 
 						
@@ -108,7 +110,7 @@ with <code>install.packages(&quot;tidyverse&quot;)</code> beforehand. We&rsquo;l
 			<div class="footer">
 	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
 	|
-	Powered by <a href="http://gohugo.io/">Hugo 0.25.1</a>
+	Powered by <a href="http://gohugo.io/">Hugo 0.24.1</a>
 	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>
 	
 </div>

@@ -17,8 +17,8 @@
       <pubDate>Sat, 23 Apr 2016 15:21:22 +0200</pubDate>
       
       <guid>/hpc-r/</guid>
-      <description>R is not a fast language. But we can make it faster. This tutorial covers a number of techniques we can use to parallelize and speed up our code. A lot of the material is borrowed from Hadley Wickham&amp;rsquo;s &amp;ldquo;Advanced R&amp;rdquo; book.
-In particular, this workshop combines a review of basic R syntax (making sure everyone is up to speed) with more advanced R concepts. Topics covered include the following:</description>
+      <description>R is not a fast language. But we can make it work extremely effectively if we know how. This tutorial covers a number of techniques we can use to parallelize and speed up our code, in addition to a couple other useful tricks we can use in our research. A lot of the material is borrowed from Hadley Wickham&amp;rsquo;s &amp;ldquo;Advanced R&amp;rdquo; book.
+In particular, this workshop combines a review of basic R syntax (making sure everyone is up to speed) with more advanced R concepts.</description>
     </item>
     
     <item>
@@ -27,9 +27,9 @@ In particular, this workshop combines a review of basic R syntax (making sure ev
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/hpc-r/basics/</guid>
-      <description>Test with R…
-print(&amp;#39;if this works i will be so very happy lol&amp;#39;) library(gapminder) head(gap) And a test with python…
-import numpy as np a = np.array([1, 2, 3, 4, 6]) print(a * a) </description>
+      <description>The absolute basics We’re going to start with the absolute fundamentals and work up from there. Unlike most regular courses, we’ll try to go in-depth into performance-related stuff as we go (keep the more advanced people interested that way…).
+The most basic use of R is as a simple calculator:
+5 + 4 ## [1] 9 1 - 3 ## [1] -2 4 * -2 ## [1] -8 5 / 6 ## [1] 0.</description>
     </item>
     
   </channel>
