@@ -1,0 +1,92 @@
+---
+title: "Vectors and indexing"
+draft: true
+---
+
+R has a special data structure called a vector. 
+A vector is a 1D set of the same type of object.
+Most often, a vector will simply be a sequence of numbers.
+We can create a sequence of numbers using the `:` operator.
+
+```{r}
+numbers <- 1:10
+numbers
+```
+
+Note that vectors are treated the same way as a single element.
+Anything that works on a single number works the same way on a vector.
+This is called vectorization.
+
+```{r}
+numbers + 5
+2 ^ numbers
+sin(numbers)
+```
+
+We can also create a vector with the `c()` function 
+(`c` stands for concatenate, in case you are wondering).
+
+```{r}
+concat <- c(4, 17, -1, 55, 2)
+concat
+```
+
+## Indexing
+
+Often, we don't want to get the entire vector. 
+Perhaps we only want a single element, or a set of specific elements.
+We do this by indexing (uses the `[]` brackets).
+
+To get the first element of a vector, we could do the following.
+In R, array indexes start at 1 - the 1st element is at index 1.
+This is different than 0-based languages like C, Python, or Java 
+where the first element is at index 0.
+
+```{r}
+concat[1]
+```
+
+To get other elements, we could do the following:
+
+```{r}
+concat[2]  # second element
+concat[length(concat)]  # last element
+```
+
+Notice that for the second example, we put a function inside the square brackets.
+In this case, `length()` is used to get the length of a vector, 
+and since the lenght of the vector will be equal to the index of its last element,
+this is a nifty way of getting the last element of a vector.
+
+We can actually put anything inside the square brackets. 
+Putting another vector inside the brackets gives us multiple values, for instance.
+
+```{r}
+concat[1:4]
+concat[c(3, 5)]
+```
+
+We can use this technique to reassign certain values inside the vector.
+For instance, we could change the 3rd and 5th values to 76 with the following code:
+
+```{r}
+concat[c(3, 5)] <- 76
+concat
+```
+
+It's even possible to index outside the bounds of a vector.
+Notice that R "fills in the blanks" with `NA` values.
+`NA` is R's placeholder for "no data" (since 0 often shows up in real data).
+
+```{r}
+concat[10] <- 4.3
+concat
+```
+
+**DON'T EVER DO THIS.**
+Though this is actually valid code in R 
+(indexing outside of a vector's size is an error in most other languages),
+it comes at a performance cost.
+We will go more in-depth as to why later on.
+
+

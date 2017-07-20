@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head lang="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+	<meta name="description" content="Making your R code just a little bit faster...">
+	<meta name="generator" content="Hugo 0.25.1" />
+	
+	<title>Vectors and indexing &mdash; HPC R</title>
+	
+	<link rel="stylesheet" href="/hpc-r/css/alabaster.css" type="text/css" />
+	<link rel="stylesheet" href="/hpc-r/css/highlight.css" type="text/css" />
+
+	
+
+	<link rel="shortcut icon" href="/hpc-r/favicon.ico" type="image/x-icon"/>
+</head>
+
+	<body role="document">
+		<div class="document">
+			<div class="documentwrapper">
+				<div class="bodywrapper">
+					<div class="body" role="main">
+						
+	<h1>Vectors and indexing</h1>
+	
+	<p>R has a special data structure called a vector. A vector is a 1D set of the same type of object. Most often, a vector will simply be a sequence of numbers. We can create a sequence of numbers using the <code>:</code> operator.</p>
+<pre class="r"><code>numbers &lt;- 1:10
+numbers</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<p>Note that vectors are treated the same way as a single element. Anything that works on a single number works the same way on a vector. This is called vectorization.</p>
+<pre class="r"><code>numbers + 5</code></pre>
+<pre><code>##  [1]  6  7  8  9 10 11 12 13 14 15</code></pre>
+<pre class="r"><code>2 ^ numbers</code></pre>
+<pre><code>##  [1]    2    4    8   16   32   64  128  256  512 1024</code></pre>
+<pre class="r"><code>sin(numbers)</code></pre>
+<pre><code>##  [1]  0.8414710  0.9092974  0.1411200 -0.7568025 -0.9589243 -0.2794155
+##  [7]  0.6569866  0.9893582  0.4121185 -0.5440211</code></pre>
+<p>We can also create a vector with the <code>c()</code> function (<code>c</code> stands for concatenate, in case you are wondering).</p>
+<pre class="r"><code>concat &lt;- c(4, 17, -1, 55, 2)
+concat</code></pre>
+<pre><code>## [1]  4 17 -1 55  2</code></pre>
+<div id="indexing" class="section level2">
+<h2>Indexing</h2>
+<p>Often, we don’t want to get the entire vector. Perhaps we only want a single element, or a set of specific elements. We do this by indexing (uses the <code>[]</code> brackets).</p>
+<p>To get the first element of a vector, we could do the following. In R, array indexes start at 1 - the 1st element is at index 1. This is different than 0-based languages like C, Python, or Java where the first element is at index 0.</p>
+<pre class="r"><code>concat[1]</code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>To get other elements, we could do the following:</p>
+<pre class="r"><code>concat[2]  # second element</code></pre>
+<pre><code>## [1] 17</code></pre>
+<pre class="r"><code>concat[length(concat)]  # last element</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>Notice that for the second example, we put a function inside the square brackets. In this case, <code>length()</code> is used to get the length of a vector, and since the lenght of the vector will be equal to the index of its last element, this is a nifty way of getting the last element of a vector.</p>
+<p>We can actually put anything inside the square brackets. Putting another vector inside the brackets gives us multiple values, for instance.</p>
+<pre class="r"><code>concat[1:4]</code></pre>
+<pre><code>## [1]  4 17 -1 55</code></pre>
+<pre class="r"><code>concat[c(3, 5)]</code></pre>
+<pre><code>## [1] -1  2</code></pre>
+<p>We can use this technique to reassign certain values inside the vector. For instance, we could change the 3rd and 5th values to 76 with the following code:</p>
+<pre class="r"><code>concat[c(3, 5)] &lt;- 76
+concat</code></pre>
+<pre><code>## [1]  4 17 76 55 76</code></pre>
+<p>It’s even possible to index outside the bounds of a vector. Notice that R “fills in the blanks” with <code>NA</code> values. <code>NA</code> is R’s placeholder for “no data” (since 0 often shows up in real data).</p>
+<pre class="r"><code>concat[10] &lt;- 4.3
+concat</code></pre>
+<pre><code>##  [1]  4.0 17.0 76.0 55.0 76.0   NA   NA   NA   NA  4.3</code></pre>
+<p><strong>DON’T EVER DO THIS.</strong> Though this is actually valid code in R (indexing outside of a vector’s size is an error in most other languages), it comes at a performance cost. We will go more in-depth as to why later on.</p>
+</div>
+
+
+
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+	<div class="sphinxsidebarwrapper">
+		<p class="logo">
+			<a href="/hpc-r/">
+				<img class="logo" src="/hpc-r/favicon.ico" alt="Logo"/>
+				<h1 class="logo logo-name">HPC R</h1>
+			</a>
+		</p>
+		
+		<p class="blurb">Making your R code just a little bit faster&hellip;</p>
+
+		
+
+	
+
+	
+
+	
+		
+
+		
+
+<h3>Navigation</h3>
+<ul>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/basics/">Basic syntax</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/basics/">Vectors and indexing</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/">High-performance R</a>
+	</li>
+	
+</ul>
+
+
+		
+
+	</div>
+</div>
+<div class="clearer"></div>
+</div>
+			<div class="footer">
+	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
+	|
+	Powered by <a href="http://gohugo.io/">Hugo 0.25.1</a>
+	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>
+	
+</div>
+
+
+
+
+			
+
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+			<script>hljs.initHighlightingOnLoad();</script>
+			
+
+			
+		</div>
+	</body>
+</html>

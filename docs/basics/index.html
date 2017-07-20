@@ -5,7 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 	<meta name="description" content="Making your R code just a little bit faster...">
-	<meta name="generator" content="Hugo 0.24.1" />
+	<meta name="generator" content="Hugo 0.25.1" />
 	
 	<title>Basic Syntax &mdash; HPC R</title>
 	
@@ -113,16 +113,16 @@ var2 &lt;- var1</code></pre>
 <p>Fortunately, the <code>pryr</code> package lets us take a closer look at R’s internal workings. The <code>address</code> function can be used to see the memory address of an R object.</p>
 <pre class="r"><code>library(pryr)
 address(var1)</code></pre>
-<pre><code>## [1] &quot;0x555a4ade5d88&quot;</code></pre>
+<pre><code>## [1] &quot;0x55df15a20848&quot;</code></pre>
 <pre class="r"><code>address(var2)</code></pre>
-<pre><code>## [1] &quot;0x555a4ade5d88&quot;</code></pre>
+<pre><code>## [1] &quot;0x55df15a20848&quot;</code></pre>
 <p>Without going into too much detail on how memory addresses and allocation works (it’s not important for writing R code), we can see that both <code>var1</code> and <code>var2</code> have the same address: they are stored in the same spot in your computer.</p>
 <p>What happens if we modify <code>var2</code>?</p>
 <pre class="r"><code>var2 &lt;- var1 + 1
 address(var1)</code></pre>
-<pre><code>## [1] &quot;0x555a4ade5d88&quot;</code></pre>
+<pre><code>## [1] &quot;0x55df15a20848&quot;</code></pre>
 <pre class="r"><code>address(var2)</code></pre>
-<pre><code>## [1] &quot;0x555a4bd26818&quot;</code></pre>
+<pre><code>## [1] &quot;0x55df16962838&quot;</code></pre>
 <p>The address has changed. After modifying <code>var2</code>, R realized that it could no longer store both variables in the same spot and made a new copy to store <code>var2</code> in.</p>
 <p>This copy-on-modify behavior has important implications for how we write R code. Don’t reassign variable names just because you want a new name for it. Every time you reassign a variable and modify it (even slightly), you force R to make a new copy, doubling it’s memory use. A smarter way of doing things (especially if you just need to modify a variable), is to do things “in-place”, or simply overwrite the original variable with its modified value.</p>
 <p><strong>Good example</strong></p>
@@ -131,10 +131,8 @@ var1 &lt;- var1 + 1</code></pre>
 <p><strong>Bad example</strong></p>
 <pre class="r"><code>var1 &lt;- 10
 var1_modified &lt;- var1 + 1</code></pre>
+<p><a href="../vectors/">Next Section</a></p>
 </div>
-</div>
-<div id="vectors" class="section level2">
-<h2>Vectors</h2>
 </div>
 
 
@@ -174,6 +172,10 @@ var1_modified &lt;- var1 + 1</code></pre>
 	</li>
 	
 	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/basics/">Vectors and indexing</a>
+	</li>
+	
+	<li class="toctree-l1">
 		<a class="reference internal" href="/hpc-r/">High-performance R</a>
 	</li>
 	
@@ -189,7 +191,7 @@ var1_modified &lt;- var1 + 1</code></pre>
 			<div class="footer">
 	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
 	|
-	Powered by <a href="http://gohugo.io/">Hugo 0.24.1</a>
+	Powered by <a href="http://gohugo.io/">Hugo 0.25.1</a>
 	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>
 	
 </div>
