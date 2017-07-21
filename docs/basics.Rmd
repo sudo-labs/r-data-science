@@ -5,8 +5,6 @@ menu: main
 weight: 2 
 ---
 
-## The absolute basics
-
 The most basic use of R is as a simple calculator:
 ```{r}
 5 + 4
@@ -220,4 +218,4 @@ var1 <- 10
 var1_modified <- var1 + 1
 ```
 
-[Next Section](../vectors/)
+## [Next Section](../vectors/)

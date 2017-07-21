@@ -26,9 +26,9 @@ In particular, these materials combine a review of basic R syntax and concepts w
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/hpc-r/basics/</guid>
-      <description>The absolute basics The most basic use of R is as a simple calculator:
+      <description>The most basic use of R is as a simple calculator:
 5 + 4 ## [1] 9 1 - 3 ## [1] -2 4 * -2 ## [1] -8 5 / 6 ## [1] 0.8333333 A function in R follows the syntax function_name(argument1, argument2). Functions perform operations on their arguments and return a result. The most basic function is the print() statement.
-print(&amp;#39;hello world!&amp;#39;) ## [1] &amp;quot;hello world!</description>
+print(&amp;#39;hello world!&amp;#39;) ## [1] &amp;quot;hello world!&amp;quot; R also gives us access to more complex mathematical funtions.</description>
     </item>
     
     <item>

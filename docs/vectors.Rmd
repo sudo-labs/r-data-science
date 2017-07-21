@@ -275,5 +275,5 @@ vector of numberic values to a vector of integers?
 Why or why not?
 {{</admonition>}}
 
-[Next section](../dataframes/)
+## [Next section](../dataframes/)
 
