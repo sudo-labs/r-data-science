@@ -1,6 +1,8 @@
 ---
 title: "Dataframes"
 draft: true
+menu: main
+weight: 4
 ---
 
 placeholder

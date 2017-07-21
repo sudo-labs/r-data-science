@@ -4,11 +4,18 @@
   
   <url>
     <loc>/hpc-r/</loc>
-    <lastmod>2016-04-23T15:21:22+02:00</lastmod>
   </url>
   
   <url>
     <loc>/hpc-r/basics/</loc>
+  </url>
+  
+  <url>
+    <loc>/hpc-r/vectors/</loc>
+  </url>
+  
+  <url>
+    <loc>/hpc-r/dataframes/</loc>
   </url>
   
   <url>
@@ -17,22 +24,13 @@
   </url>
   
   <url>
-    <loc>/hpc-r/dataframes/</loc>
-  </url>
-  
-  <url>
     <loc>/hpc-r/</loc>
-    <lastmod>2016-04-23T15:21:22+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/hpc-r/tags/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/hpc-r/vectors/</loc>
   </url>
   
 </urlset>

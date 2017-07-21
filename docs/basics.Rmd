@@ -1,13 +1,11 @@
 ---
 title: "Basic Syntax"
 draft: true
+menu: main
+weight: 2 
 ---
 
 ## The absolute basics
-
-We're going to start with the absolute fundamentals and work up from there.
-Unlike most regular courses, we'll try to go in-depth into performance-related
-stuff as we go (keep the more advanced people interested that way...).
 
 The most basic use of R is as a simple calculator:
 ```{r}

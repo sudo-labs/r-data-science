@@ -1,24 +1,28 @@
 ---
-date: 2016-04-23T15:21:22+02:00
 title: High-performance R
 type: homepage
 menu: main
-weight: 0
+weight: 1
 ---
 
-R is not a fast language. But we can make it work extremely effectively 
-if we know how.
-This tutorial covers a number of techniques we can use to parallelize and speed 
-up our code, in addition to a couple other useful tricks we can use in our
-research.
-A lot of the material is borrowed from Hadley Wickham's 
-"[Advanced R](http://adv-r.had.co.nz/)" book.
+Although R is probably not the fastest language ever made, 
+it's one of the most effective data analysis tools out there.
+This tutorial focus on a number of techniques we can use to parallelize and speed 
+up our code, in addition to a couple other useful techniques we can use in our
+research. 
 
-In particular, this workshop combines a review of basic R syntax 
-(making sure everyone is up to speed) with more advanced R concepts. 
+In particular, these materials combine a review of basic R syntax 
+and concepts with more advanced performance-related content. 
+The goal of this format is two-fold:
+we want to make sure everyone is on the same page,
+and it ensures a relatively logical progression of concepts 
+(the alternative is to have two distinct lessons, 
+and have the difficulty level go from 0 to 9000 real fast).
+Hopefully these materials will be useful for R users of all levels.
+
 Topics covered include the following:
 
-* Basic R syntax
+* Basic R syntax and concepts
 * Doing work with the "tidyverse" packages (`dplyr`, `purrr`, `ggplot2`)
 * Common performance optimizations
 * Parallelization with `doParallel` and `plyr`
@@ -35,3 +39,12 @@ Before you start, make sure you have both [R](https://www.r-project.org/) and
 You may also wish to install the [tidyverse](http://tidyverse.org/) packages
 with `install.packages("tidyverse")` beforehand. We'll be using them a lot.
 
+## Credits
+
+Giving credit where credit is due, 
+these materials borrow liberally from
+Software Carpentry's [R for Reproducible Science](https://swcarpentry.github.io/r-novice-gapminder/) workshop 
+as well as a lot of concepts from 
+Hadley Wickham's "[Advanced R](http://adv-r.had.co.nz/)" book.
+
+# [Get started](./basics/)

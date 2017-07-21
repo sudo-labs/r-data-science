@@ -8,16 +8,6 @@ publishDir = "docs"
 disqusShortname = ""
 googleAnalytics = ""
 
-[[menu.main]]
-  name = "Basic syntax"
-  url =  "/basics/"
-  weight = 1
-
-[[menu.main]]
-  name = "Vectors and indexing"
-  url =  "/basics/"
-  weight = 1
-
 [params]
 	name = "HPC R"
 	description = "Making your R code just a little bit faster..."
