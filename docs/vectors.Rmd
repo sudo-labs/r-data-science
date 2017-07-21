@@ -89,4 +89,189 @@ Though this is actually valid code in R
 it comes at a performance cost.
 We will go more in-depth as to why later on.
 
+## Matrices
+
+A matrix is a two-dimensional vector.
+Let's create a matrix with the `matrix()` function.
+One important note here:
+functions often have optional, "extra" arguments 
+that are specified with `name=value` notation.
+In this case, we are creating a matrix with 2 rows and 5 columns.
+
+```{r}
+mat <- matrix(1:10, nrow=2, ncol=5)
+mat
+```
+
+All of the same operations that work on vectors also work on matrices.
+
+```{r}
+mat + 20
+dim(mat)  # grab dimensions of a matrix
+length(mat)  # number of elements in a matrix
+```
+
+However, indexing a matrix is slightly different from indexing in a vector.
+We now have not only one, but two dimensions to choose from.
+When indexing using an object with multiple dimensions, we use a `,` to separate them.
+In R, rows are on the left side of the comma, 
+and columns are on the right 
+(a third dimension would be after the second comma, and so on...).
+Note that R is actually trying to help us out here.
+When we printed our matrix, the rows have a `[#,]` next to them, 
+and the columns have a `[,#]`.
+This actually shows us the exact syntax we need to get each element.
+
+So using the matrix output from above, `mat[1,]` should give us the first row, 
+and `mat[,4]` should give us the fourth column.
+Let's check this:
+
+```{r}
+mat[1,]
+mat[,4]
+```
+
+We can index both rows and columns at the same time to get a specific element.
+
+```{r}
+mat[1, 1]  # grab first row, first column
+mat[2, 1:3]  # elements 1-3 of the second row
+```
+
+{{<admonition title="Exercise - Grabbing unrelated elements">}}
+Try getting the columns 1, 4, and 5 of the first row in one command.
+{{</admonition>}}
+
+{{<admonition title="Exercise - Reading documentation">}}
+Create an 8x5 matrix using the numbers 1:40. 
+See if you can get it to fill by row instead of by column.
+
+Hint: you should check the documentation for `matrix()`.
+{{</admonition>}}
+
+## Different types of data
+
+In most programming languages, text is called a string.
+To create text in R, we simply surround it with double (`"`) 
+or single (`'`) quotes.
+We've actually seen an example of a string already
+(`print('hello world!')`).
+
+```{r}
+"this is a string"
+paste('we can combine strings', 'with the paste() function')
+```
+
+What happens when we add a string to a vector of numbers?
+
+```{r}
+numbers <- c(1, 4, 9, 10)
+numbers
+numbers[3] <- "testing..."
+numbers
+```
+
+Our entire vector of numbers was turned into strings!
+This is an important property of vectors and matrices:
+they can only hold one type of data!
+If we try putting a different type into a vector,
+R will convert the entire vector to the new datatype.
+
+Again, this conversion has a massive performance hit, 
+especially for a large vector or matrix.
+R needs to create an entire new vector from scratch,
+and then copy over and convert every item.
+
+So let's learn about R's different data types.
+There are a few more types that we're not covering here
+or cover later (like factors, for instance).
+These are simply the most common data types we will encounter.
+
+### Numeric
+
+Numeric variables can hold any decimal number, positive or negative.
+In other languages these are called floats.
+Note that this is the default type of number in R.
+
+To create a numeric value, all we have to do is type it normally.
+
+```{r}
+1
+-3.5
+```
+
+We can convert another variable to numeric with the `as.numeric()` function.
+This only works with values that can be easily converted.
+
+```{r}
+as.numeric("456")  # this works
+as.numeric("seven")  # this does not
+```
+
+### Integers
+
+Integers represent any whole number, positive or negative. 
+They cannot hold decimal numbers.
+
+To create a number explicitly as an integer, add an `L` after it.
+
+```{r}
+15L
+```
+
+We can convert a set of data to integer with the `as.integer()` function.
+
+```{r}
+as.integer(c("65.3", "4"))
+```
+
+### Characters (strings)
+
+As mentioned earlier, strings are sets of text.
+We can turn something into a string with the `as.character()` function.
+
+```{r}
+as.character(TRUE)
+```
+
+### Logical (boolean) values
+
+There are just two logical values: `TRUE` and `FALSE`.
+These are used, quite literally, to represent whether or not a statement is true or false.
+
+As usual, we can turn something into a logical/boolean value with the `as.logical()` function.
+One important thing to note is that this very nicely demonstrates
+what happens when we turn one data type into another.
+If one data type cannot hold extra information from another, 
+that information is lost during conversion.
+
+```{r}
+fifty <- as.logical(50)
+fifty
+as.numeric(fifty)
+```
+
+{{<admonition title="Exercise - Converting data types">}}
+See if you can make the following expressions work:
+
+`5 + "10"` - Get 15 as a result.
+
+`3 + 3.7` - Get 6 as a result.
+
+`1 + 1` - Your answer should equal "11".
+
+`"4" + 10` - Get 5 as a result.
+{{</admonition>}}
+
+{{<admonition title="Exercise - Data sizes">}}
+In many programming languages, different types of data take up different amounts of memory. 
+Is this true in R?
+
+You can check how big an object is in memory using the `object_size()` function from the `pryr` package.
+Are there any memory optimizations to be had from converting a
+vector of numberic values to a vector of integers?
+Why or why not?
+{{</admonition>}}
+
+[Next section](../dataframes/)
 

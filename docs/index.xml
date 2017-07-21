@@ -33,6 +33,15 @@ The most basic use of R is as a simple calculator:
     </item>
     
     <item>
+      <title>Dataframes</title>
+      <link>/hpc-r/dataframes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/dataframes/</guid>
+      <description>placeholder</description>
+    </item>
+    
+    <item>
       <title>Vectors and indexing</title>
       <link>/hpc-r/vectors/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

@@ -48,3 +48,102 @@ concat</code></pre>
 <pre><code>##  [1]  4.0 17.0 76.0 55.0 76.0   NA   NA   NA   NA  4.3</code></pre>
 <p><strong>DON’T EVER DO THIS.</strong> Though this is actually valid code in R (indexing outside of a vector’s size is an error in most other languages), it comes at a performance cost. We will go more in-depth as to why later on.</p>
 </div>
+<div id="matrices" class="section level2">
+<h2>Matrices</h2>
+<p>A matrix is a two-dimensional vector. Let’s create a matrix with the <code>matrix()</code> function. One important note here: functions often have optional, “extra” arguments that are specified with <code>name=value</code> notation. In this case, we are creating a matrix with 2 rows and 5 columns.</p>
+<pre class="r"><code>mat &lt;- matrix(1:10, nrow=2, ncol=5)
+mat</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    1    3    5    7    9
+## [2,]    2    4    6    8   10</code></pre>
+<p>All of the same operations that work on vectors also work on matrices.</p>
+<pre class="r"><code>mat + 20</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5]
+## [1,]   21   23   25   27   29
+## [2,]   22   24   26   28   30</code></pre>
+<pre class="r"><code>dim(mat)  # grab dimensions of a matrix</code></pre>
+<pre><code>## [1] 2 5</code></pre>
+<pre class="r"><code>length(mat)  # number of elements in a matrix</code></pre>
+<pre><code>## [1] 10</code></pre>
+<p>However, indexing a matrix is slightly different from indexing in a vector. We now have not only one, but two dimensions to choose from. When indexing using an object with multiple dimensions, we use a <code>,</code> to separate them. In R, rows are on the left side of the comma, and columns are on the right (a third dimension would be after the second comma, and so on…). Note that R is actually trying to help us out here. When we printed our matrix, the rows have a <code>[#,]</code> next to them, and the columns have a <code>[,#]</code>. This actually shows us the exact syntax we need to get each element.</p>
+<p>So using the matrix output from above, <code>mat[1,]</code> should give us the first row, and <code>mat[,4]</code> should give us the fourth column. Let’s check this:</p>
+<pre class="r"><code>mat[1,]</code></pre>
+<pre><code>## [1] 1 3 5 7 9</code></pre>
+<pre class="r"><code>mat[,4]</code></pre>
+<pre><code>## [1] 7 8</code></pre>
+<p>We can index both rows and columns at the same time to get a specific element.</p>
+<pre class="r"><code>mat[1, 1]  # grab first row, first column</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>mat[2, 1:3]  # elements 1-3 of the second row</code></pre>
+<pre><code>## [1] 2 4 6</code></pre>
+<p>{{<admonition title="Exercise - Grabbing unrelated elements">}} Try getting the columns 1, 4, and 5 of the first row in one command. {{</admonition>}}</p>
+<p>{{<admonition title="Exercise - Reading documentation">}} Create an 8x5 matrix using the numbers 1:40. See if you can get it to fill by row instead of by column.</p>
+<p>Hint: you should check the documentation for <code>matrix()</code>. {{</admonition>}}</p>
+</div>
+<div id="different-types-of-data" class="section level2">
+<h2>Different types of data</h2>
+<p>In most programming languages, text is called a string. To create text in R, we simply surround it with double (<code>&quot;</code>) or single (<code>'</code>) quotes. We’ve actually seen an example of a string already (<code>print('hello world!')</code>).</p>
+<pre class="r"><code>&quot;this is a string&quot;</code></pre>
+<pre><code>## [1] &quot;this is a string&quot;</code></pre>
+<pre class="r"><code>paste(&#39;we can combine strings&#39;, &#39;with the paste() function&#39;)</code></pre>
+<pre><code>## [1] &quot;we can combine strings with the paste() function&quot;</code></pre>
+<p>What happens when we add a string to a vector of numbers?</p>
+<pre class="r"><code>numbers &lt;- c(1, 4, 9, 10)
+numbers</code></pre>
+<pre><code>## [1]  1  4  9 10</code></pre>
+<pre class="r"><code>numbers[3] &lt;- &quot;testing...&quot;
+numbers</code></pre>
+<pre><code>## [1] &quot;1&quot;          &quot;4&quot;          &quot;testing...&quot; &quot;10&quot;</code></pre>
+<p>Our entire vector of numbers was turned into strings! This is an important property of vectors and matrices: they can only hold one type of data! If we try putting a different type into a vector, R will convert the entire vector to the new datatype.</p>
+<p>Again, this conversion has a massive performance hit, especially for a large vector or matrix. R needs to create an entire new vector from scratch, and then copy over and convert every item.</p>
+<p>So let’s learn about R’s different data types. There are a few more types that we’re not covering here or cover later (like factors, for instance). These are simply the most common data types we will encounter.</p>
+<div id="numeric" class="section level3">
+<h3>Numeric</h3>
+<p>Numeric variables can hold any decimal number, positive or negative. In other languages these are called floats. Note that this is the default type of number in R.</p>
+<p>To create a numeric value, all we have to do is type it normally.</p>
+<pre class="r"><code>1</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>-3.5</code></pre>
+<pre><code>## [1] -3.5</code></pre>
+<p>We can convert another variable to numeric with the <code>as.numeric()</code> function. This only works with values that can be easily converted.</p>
+<pre class="r"><code>as.numeric(&quot;456&quot;)  # this works</code></pre>
+<pre><code>## [1] 456</code></pre>
+<pre class="r"><code>as.numeric(&quot;seven&quot;)  # this does not</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre><code>## [1] NA</code></pre>
+</div>
+<div id="integers" class="section level3">
+<h3>Integers</h3>
+<p>Integers represent any whole number, positive or negative. They cannot hold decimal numbers.</p>
+<p>To create a number explicitly as an integer, add an <code>L</code> after it.</p>
+<pre class="r"><code>15L</code></pre>
+<pre><code>## [1] 15</code></pre>
+<p>We can convert a set of data to integer with the <code>as.integer()</code> function.</p>
+<pre class="r"><code>as.integer(c(&quot;65.3&quot;, &quot;4&quot;))</code></pre>
+<pre><code>## [1] 65  4</code></pre>
+</div>
+<div id="characters-strings" class="section level3">
+<h3>Characters (strings)</h3>
+<p>As mentioned earlier, strings are sets of text. We can turn something into a string with the <code>as.character()</code> function.</p>
+<pre class="r"><code>as.character(TRUE)</code></pre>
+<pre><code>## [1] &quot;TRUE&quot;</code></pre>
+</div>
+<div id="logical-boolean-values" class="section level3">
+<h3>Logical (boolean) values</h3>
+<p>There are just two logical values: <code>TRUE</code> and <code>FALSE</code>. These are used, quite literally, to represent whether or not a statement is true or false.</p>
+<p>As usual, we can turn something into a logical/boolean value with the <code>as.logical()</code> function. One important thing to note is that this very nicely demonstrates what happens when we turn one data type into another. If one data type cannot hold extra information from another, that information is lost during conversion.</p>
+<pre class="r"><code>fifty &lt;- as.logical(50)
+fifty</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>as.numeric(fifty)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>{{<admonition title="Exercise - Converting data types">}} See if you can make the following expressions work:</p>
+<p><code>5 + &quot;10&quot;</code> - Get 15 as a result.</p>
+<p><code>3 + 3.7</code> - Get 6 as a result.</p>
+<p><code>1 + 1</code> - Your answer should equal “11”.</p>
+<p><code>&quot;4&quot; + 10</code> - Get 5 as a result. {{</admonition>}}</p>
+<p>{{<admonition title="Exercise - Data sizes">}} In many programming languages, different types of data take up different amounts of memory. Is this true in R?</p>
+<p>You can check how big an object is in memory using the <code>object_size()</code> function from the <code>pryr</code> package. Are there any memory optimizations to be had from converting a vector of numberic values to a vector of integers? Why or why not? {{</admonition>}}</p>
+<p><a href="../dataframes/">Next section</a></p>
+</div>
+</div>
