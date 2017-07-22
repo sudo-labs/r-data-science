@@ -253,6 +253,22 @@ fifty
 as.numeric(fifty)
 ```
 
+### Determining data types
+
+If something isn't working the way it's supposed to,
+a great technique is to check what type of data it is with the `class()` function:
+
+```{r}
+class(14)
+class(1L)
+class(TRUE)
+class("text")
+class(NA)  
+```
+
+Note that `NA`'s can be of any type, 
+and are often used as placeholders for missing data.
+
 {{<admonition title="Exercise - Converting data types">}}
 See if you can make the following expressions work:
 

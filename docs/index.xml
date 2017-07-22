@@ -47,7 +47,20 @@ numbers &amp;lt;- 1:10 numbers ## [1] 1 2 3 4 5 6 7 8 9 10 Note that vectors are
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/hpc-r/dataframes/</guid>
-      <description>placeholder</description>
+      <description>Vectors and matrices are super cool. However they don’t address an important issue: holding multiple types of data and working with them at the same time. Dataframes are another special data structure that let’s you handle large amounts and different types of data together. Because of this, they are generally the tool-of-choice for doing analyses in R.
+We are going to focus on using dataframes using the dplyr package. dplyr comes as part of the tidyverse package bundle, you can install it with install.</description>
+    </item>
+    
+    <item>
+      <title>Data analysis with dplyr</title>
+      <link>/hpc-r/dplyr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/dplyr/</guid>
+      <description>About the rest of this tutorial
+There are a million different ways to do things in R. This isn’t Python, where solutions on StackOverflow get ranked on how “Pythonic” they are. If there’s something you like about another workflow in R, there’s nothing stopping you from using it!
+In this case, there are three main camps on analyzing dataframes in R:
+ “Base R” - “Base R” means using only functions and stuff built into your base R installation.</description>
     </item>
     
   </channel>

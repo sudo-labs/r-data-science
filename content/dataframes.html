@@ -7,4 +7,163 @@ weight: 4
 
 
 
-<p>placeholder</p>
+<p>Vectors and matrices are super cool. However they don’t address an important issue: holding multiple types of data and working with them at the same time. Dataframes are another special data structure that let’s you handle large amounts and different types of data together. Because of this, they are generally the tool-of-choice for doing analyses in R.</p>
+<p>We are going to focus on using dataframes using the <code>dplyr</code> package. <code>dplyr</code> comes as part of the <code>tidyverse</code> package bundle, you can install it with <code>install.packages(&quot;tidyverse&quot;)</code>. It can take awhile to install this on Linux, so perhaps start the command in another window while we go through the non-dplyr parts.</p>
+<div id="a-small-example" class="section level2">
+<h2>A small example</h2>
+<p>In a text editor, create the following example CSV file. We’ll call it <code>cats.csv</code>.</p>
+<pre><code>coat,weight,likes_string
+calico,2.1,1
+black,5.0,0
+tabby,3.2,1</code></pre>
+<p>Once we’ve saved it in the same directory we’re working in, we can load it with <code>read.csv()</code>.</p>
+<pre class="r"><code>cats &lt;- read.csv(&#39;cats.csv&#39;)
+cats</code></pre>
+<pre><code>##     coat weight likes_string
+## 1 calico    2.1            1
+## 2  black    5.0            0
+## 3  tabby    3.2            1</code></pre>
+<p>Whenever we import a dataset with multiple types of values, R will autodetect this and make the output a dataframe. Let’s verify this for ourselves:</p>
+<pre class="r"><code>class(cats)</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<p>So, we’ve got a dataframe with multiple types of values. How do we work with it? Fortunately, everything we know about vectors also applies to dataframes.</p>
+<p>Each column of a dataframe can be used as a vector. We use the <code>$</code> operator to specify which column we want.</p>
+<pre class="r"><code>cats$weight + 34</code></pre>
+<pre><code>## [1] 36.1 39.0 37.2</code></pre>
+<pre class="r"><code>class(cats$weight)</code></pre>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<pre class="r"><code>cats$coat</code></pre>
+<pre><code>## [1] calico black  tabby 
+## Levels: black calico tabby</code></pre>
+<p>We can also reassign columns as if they were variables. The <code>cats$likes_string</code> likely represents a set of boolean value, lets update that column to reflect this fact.</p>
+<pre class="r"><code>class(cats$likes_string)  # before</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<pre class="r"><code>cats$likes_string &lt;- as.logical(cats$likes_string)
+class(cats$likes_string)</code></pre>
+<pre><code>## [1] &quot;logical&quot;</code></pre>
+<p>We can even add a column if we want!</p>
+<pre class="r"><code>cats$age &lt;- c(1, 6, 4, 2.5)</code></pre>
+<pre><code>Error in `$&lt;-.data.frame`(`*tmp*`, age, value = c(1, 6, 4, 2.5)) : 
+  replacement has 4 rows, data has 3</code></pre>
+<p>Notice how it won’t let us do that. The reason is that dataframes must have the same number of elements in every column. If each column only has 3 rows, we can’t add another column with 4 rows. Let’s try that again with the proper number of elements.</p>
+<pre class="r"><code>cats$age &lt;- c(1, 6, 4)
+cats</code></pre>
+<pre><code>##     coat weight likes_string age
+## 1 calico    2.1         TRUE   1
+## 2  black    5.0        FALSE   6
+## 3  tabby    3.2         TRUE   4</code></pre>
+<p>Note that we don’t have to call <code>class()</code> on every single column to figure out what they are. There are a number of useful summary functions to get information about our dataframe.</p>
+<p><code>str()</code> reports on the structure of your dataframe. It is an extremely useful function - use it on everything if you’ve loaded a dataset for the first time.</p>
+<pre class="r"><code>str(cats)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    3 obs. of  4 variables:
+##  $ coat        : Factor w/ 3 levels &quot;black&quot;,&quot;calico&quot;,..: 2 1 3
+##  $ weight      : num  2.1 5 3.2
+##  $ likes_string: logi  TRUE FALSE TRUE
+##  $ age         : num  1 6 4</code></pre>
+<p>As with matrices, we can use <code>dim()</code> to know how many rows and columns we’re working with.</p>
+<pre class="r"><code>dim(cats)</code></pre>
+<pre><code>## [1] 3 4</code></pre>
+<pre class="r"><code>nrow(cats)  # number of rows only</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>ncol(cats)  # number of columns only</code></pre>
+<pre><code>## [1] 4</code></pre>
+</div>
+<div id="factors" class="section level2">
+<h2>Factors</h2>
+<p>When we ran <code>str(cats)</code>, you might have noticed something weird. <code>cats$coat</code> is listed as a “factor”. A factor is a special type of data that’s <em>almost</em> a string.</p>
+<p>It prints like a string (sort of):</p>
+<pre class="r"><code>cats$coat</code></pre>
+<pre><code>## [1] calico black  tabby 
+## Levels: black calico tabby</code></pre>
+<p>It can be used like a string:</p>
+<pre class="r"><code>paste(&quot;The cat is&quot;, cats$coat)</code></pre>
+<pre><code>## [1] &quot;The cat is calico&quot; &quot;The cat is black&quot;  &quot;The cat is tabby&quot;</code></pre>
+<p>But it’s not a string! The output of <code>str(cats)</code> gives us a clue to what’s actually happening behind-the-scenes.</p>
+<pre class="r"><code>str(cats)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    3 obs. of  4 variables:
+##  $ coat        : Factor w/ 3 levels &quot;black&quot;,&quot;calico&quot;,..: 2 1 3
+##  $ weight      : num  2.1 5 3.2
+##  $ likes_string: logi  TRUE FALSE TRUE
+##  $ age         : num  1 6 4</code></pre>
+<p><code>str()</code> reports that the first values are 2, 1, 3 (and not text). Let’s use <code>as.numeric()</code> to reveal its true form!</p>
+<pre class="r"><code>as.numeric(cats$coat)</code></pre>
+<pre><code>## [1] 2 1 3</code></pre>
+<pre class="r"><code>cats$coat</code></pre>
+<pre><code>## [1] calico black  tabby 
+## Levels: black calico tabby</code></pre>
+<p>A factor has two components, its levels and its values. Levels represent all possible values for a column. In this case, there’s only 3 possiblities: <code>black</code>, <code>calico</code> and <code>tabby</code>.</p>
+<p>The actual values are 2, 1, and 3. Each value matches up to a specific level. So in our example, the first value is 2, which corresponds to the second level, <code>calico</code>. The second value is 1, which matches up with the first level, <code>black</code>.</p>
+<p>Factors in R are a method of storing text information as one of several possible “levels”. R converts text to factors automatically when we import data, like from a CSV file. We’ve got several options here:</p>
+<p>Convert the factor to a character vector ourselves:</p>
+<pre class="r"><code>cats$coat &lt;- as.character(cats$coat)
+class(cats$coat)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<p>Tell R to simply not convert things to factors when we import it (<code>as.is=TRUE</code> is the R equivalent of “don’t touch my stuff!”):</p>
+<pre class="r"><code>new_cats &lt;- read.csv(&#39;cats.csv&#39;, as.is=TRUE)
+class(new_cats$coat)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<p>Use the <code>read_csv()</code> function from the <code>readr</code> package. <code>readr</code> is part of the <code>tidyverse</code> and has a number of ways of reading/writing data with more sensible defaults.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+<pre class="r"><code>even_newer_cats &lt;- read_csv(&#39;cats.csv&#39;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   coat = col_character(),
+##   weight = col_double(),
+##   likes_string = col_integer()
+## )</code></pre>
+<pre class="r"><code>class(even_newer_cats$coat)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<div id="performance-considerations" class="section level3">
+<h3>Performance considerations</h3>
+<p>As you can see, factors can be kind of a pain to deal with. So why do they even exist? The short answer is that they are an effective way of optimizing memory usage.</p>
+<p>To demonstrate this, we’ll examine the gapminder example dataset (<code>install.packages(&quot;gapminder&quot;)</code>).</p>
+<pre class="r"><code>library(gapminder)
+head(gapminder)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##       country continent  year lifeExp      pop gdpPercap
+##        &lt;fctr&gt;    &lt;fctr&gt; &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Afghanistan      Asia  1952  28.801  8425333  779.4453
+## 2 Afghanistan      Asia  1957  30.332  9240934  820.8530
+## 3 Afghanistan      Asia  1962  31.997 10267083  853.1007
+## 4 Afghanistan      Asia  1967  34.020 11537966  836.1971
+## 5 Afghanistan      Asia  1972  36.088 13079460  739.9811
+## 6 Afghanistan      Asia  1977  38.438 14880372  786.1134</code></pre>
+<pre class="r"><code>str(gapminder)</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    1704 obs. of  6 variables:
+##  $ country  : Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
+##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
+##  $ gdpPercap: num  779 821 853 836 740 ...</code></pre>
+<p>Notice how <code>gapminder</code> contains several columns with a lot of highly repetitive data. For instance, the <code>continent</code> column contains only 5 values:</p>
+<pre class="r"><code>unique(gapminder$continent)</code></pre>
+<pre><code>## [1] Asia     Europe   Africa   Americas Oceania 
+## Levels: Africa Americas Asia Europe Oceania</code></pre>
+<p>In this case, <code>gapminder$continent</code> has been stored as a factor. Let’s examine the amount of space used if this column was stored as a character vector vs. storing the data as a factor.</p>
+<pre class="r"><code>library(pryr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;pryr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:purrr&#39;:
+## 
+##     compose, partial</code></pre>
+<pre class="r"><code>object_size(gapminder$continent)</code></pre>
+<pre><code>## 7.51 kB</code></pre>
+<pre class="r"><code>object_size(as.character(gapminder$continent))</code></pre>
+<pre><code>## 13.9 kB</code></pre>
+<p>The character version of <code>gapminder$continent</code> takes up almost twice as much space! Storing things as one of several possible integer values behind the scenes is a lot more efficient than storing the entire set of text for every single entry. Note that the amount of memory saved depends on the repetitiveness of the data. If a column has a lot of unique text values, converting it to a factor will likely be of little benefit.</p>
+<p>The takeaway here is that if you ever find yourself working on a large dataset and memory usage becomes an issue, converting your most repetitive string columns to factors can be a useful way to save space. Otherwise, just use character vectors (less hidden “gotchas” that way).</p>
+</div>
+</div>
+<div id="next-section" class="section level2">
+<h2><a href="../dplyr/">Next section</a></h2>
+</div>

@@ -163,6 +163,21 @@ fifty</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code>as.numeric(fifty)</code></pre>
 <pre><code>## [1] 1</code></pre>
+</div>
+<div id="determining-data-types" class="section level3">
+<h3>Determining data types</h3>
+<p>If something isn’t working the way it’s supposed to, a great technique is to check what type of data it is with the <code>class()</code> function:</p>
+<pre class="r"><code>class(14)</code></pre>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<pre class="r"><code>class(1L)</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<pre class="r"><code>class(TRUE)</code></pre>
+<pre><code>## [1] &quot;logical&quot;</code></pre>
+<pre class="r"><code>class(&quot;text&quot;)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<pre class="r"><code>class(NA)  </code></pre>
+<pre><code>## [1] &quot;logical&quot;</code></pre>
+<p>Note that <code>NA</code>’s can be of any type, and are often used as placeholders for missing data.</p>
 <div class="admonition ">
 <p class="first admonition-title">Exercise - Converting data types</p>
 <p>See if you can make the following expressions work:</p>
@@ -228,6 +243,10 @@ fifty</code></pre>
 	
 	<li class="toctree-l1">
 		<a class="reference internal" href="/hpc-r/dataframes/">Dataframes</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/dplyr/">Data analysis with dplyr</a>
 	</li>
 	
 </ul>
