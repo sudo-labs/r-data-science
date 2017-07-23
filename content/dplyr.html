@@ -118,4 +118,321 @@ head(flights)  # shows the top few rows of a dataset</code></pre>
 ##  $ time_hour     : POSIXct, format: &quot;2013-01-01 05:00:00&quot; &quot;2013-01-01 05:00:00&quot; ...</code></pre>
 <pre class="r"><code>dim(flights)</code></pre>
 <pre><code>## [1] 336776     19</code></pre>
+<p>{{<admonition title="A note about tbl_dfs" type="note">}} <code>flights</code> is an example of a “tibble” or <code>tbl_df</code>. <code>tbl_df</code>s are identical to dataframes for most purposes, but they print out differently (notice how we didnt’t get all of the columns!).</p>
+<pre class="r"><code>class(flights)</code></pre>
+<pre><code>## [1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p>To force a <code>tbl_df</code> to print all columns, you can use <code>print(some_tbl_df, width=Inf)</code></p>
+<p>If we ever get annoyed with a <code>tbl_df</code>, we can turn it back into a dataframe with <code>as.data.frame()</code>.</p>
+<pre class="r"><code>class(as.data.frame(flights))</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<p>{{</admonition>}}</p>
+<p>The <code>flights</code> table clocks in at several hundred thousand rows. That’s a fair sized chunk of data. Nevertheless, our tricks from before work just the same.</p>
+<p>Using the same technique from before, let’s retrieve all of the flights that went to Los Angeles (LAX).</p>
+<pre class="r"><code>rows_with_yvr &lt;- flights$dest == &quot;LAX&quot;
+flights[rows_with_yvr, ]</code></pre>
+<pre><code>## # A tibble: 16,174 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      558            600        -2      924
+##  2  2013     1     1      628            630        -2     1016
+##  3  2013     1     1      658            700        -2     1027
+##  4  2013     1     1      702            700         2     1058
+##  5  2013     1     1      743            730        13     1107
+##  6  2013     1     1      828            823         5     1150
+##  7  2013     1     1      829            830        -1     1152
+##  8  2013     1     1      856            900        -4     1226
+##  9  2013     1     1      859            900        -1     1223
+## 10  2013     1     1      921            900        21     1237
+## # ... with 16,164 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+<pre class="r"><code># and the same, but in one line
+result &lt;- flights[flights$dest == &quot;LAX&quot;, ]
+# checking our work... we should only see &quot;LAX&quot; here
+unique(result$dest)</code></pre>
+<pre><code>## [1] &quot;LAX&quot;</code></pre>
+<pre class="r"><code># how many results did we get
+nrow(result)</code></pre>
+<pre><code>## [1] 16174</code></pre>
+<p>Breaking things apart, we look for all instances where the column <code>dest</code> was equal to “LAX”. We end up with a vector of whether or not “LAX” was found in each row. We can then use the square brackets to extract every row where the vector is true. Note the addition of a comma in our square brackets. <code>flights</code> has 2 dimensions, so our indexing needs to as well!</p>
+<p>If we don’t add the comma, R gets upset:</p>
+<pre class="r"><code>flights[flights$dest]</code></pre>
+<pre><code>Error: Length of logical index vector must be 1 or 19 (the number of rows), not 336776</code></pre>
+<p>One other issue - what happens if we want to grab the flights to either LAX or SEA (Seattle). Let’s try the following:</p>
+<pre class="r"><code>result &lt;- flights[flights$dest == c(&quot;LAX&quot;, &quot;SEA&quot;), ]
+unique(result$dest)</code></pre>
+<pre><code>## [1] &quot;LAX&quot; &quot;SEA&quot;</code></pre>
+<pre class="r"><code>nrow(result)</code></pre>
+<pre><code>## [1] 10060</code></pre>
+<p>Though in both cases we got results corresponding to the cities we wanted, it looks like somethig went wrong. Before, we got 16174 results for just “LAX”. Now we only get 10060, and we even added an extra city worth of flights! So what’s happening here?</p>
+<p>When R compares two vectors of different length, it “recycles” the shorter vector until it matches the length of the longer one!</p>
+<p>Using a smaller example, this is what just happened:</p>
+<pre class="r"><code>long &lt;- c(1, 1, 1, 2, 2, 2, 3)
+short &lt;- c(1, 2)
+long == short</code></pre>
+<pre><code>## Warning in long == short: longer object length is not a multiple of shorter
+## object length</code></pre>
+<pre><code>## [1]  TRUE FALSE  TRUE  TRUE FALSE  TRUE FALSE</code></pre>
+<pre class="r"><code># what R is really doing behind the scenes
+short_recycled &lt;- c(1, 2, 1, 2, 1, 2, 1)
+long == short_recycled</code></pre>
+<pre><code>## [1]  TRUE FALSE  TRUE  TRUE FALSE  TRUE FALSE</code></pre>
+<p>This is not what we want. We want to know if elements in the long vector were found “in” the shorter vector, not whether or not the two are equal at every point. Fortunately, there is a special <code>%in%</code> operator that does just that.</p>
+<pre class="r"><code>long %in% short</code></pre>
+<pre><code>## [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE</code></pre>
+<pre class="r"><code># and using that to subset values
+long[long %in% short]</code></pre>
+<pre><code>## [1] 1 1 1 2 2 2</code></pre>
+<p>If we take the <code>%in%</code> operator and apply it to our issue, we get the correct number of rows.</p>
+<pre class="r"><code>res &lt;- flights[flights$dest %in% c(&quot;SEA&quot;, &quot;LAX&quot;), ]
+nrow(res)</code></pre>
+<pre><code>## [1] 20097</code></pre>
+<pre class="r"><code># our results contain the same number of flights bound for LAX
+nrow(res[flights$dest == &quot;LAX&quot;, ])</code></pre>
+<pre><code>## [1] 16174</code></pre>
+</div>
+<div id="filtering-rows-with-dplyr" class="section level2">
+<h2>Filtering rows with <code>dplyr</code></h2>
+<p>Up to this point, we’ve done everything using base R. Our code has a lot of crazy symbols in it, and isn’t that readable for the average person. It’s also not that fun to type out.</p>
+<p>Let’s try things the “tidyverse” way using <code>dplyr</code> (<code>dplyr</code> is a package that comes as part of the <code>tidyverse</code> package bundle).</p>
+<p>To filter out a set of specific rows that match a condition, we use the <code>filter()</code> function. The syntax of this function is a bit unusual:</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+<pre class="r"><code>results &lt;- filter(flights, dest == &quot;LAX&quot;)
+nrow(results)</code></pre>
+<pre><code>## [1] 16174</code></pre>
+<p>Notice how we just used <code>dest</code> all by itself. <code>filter()</code> is smart enough to figure out that <code>dest</code> is a column name in the <code>flights</code> dataframe.</p>
+<p>We can also filter multiple things at once using the <code>&amp;</code> (AND) and <code>|</code> (OR) operators. <code>&amp;</code> checks if both conditions are true, <code>|</code> checks if just one condition is true:</p>
+<pre class="r"><code>TRUE &amp; TRUE</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>TRUE &amp; FALSE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>TRUE | FALSE</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>Using this in an example with <code>filter()</code> to fetch all the flights to LAX in February:</p>
+<pre class="r"><code>filter(flights, dest == &quot;LAX&quot; &amp; month == 2)</code></pre>
+<pre><code>## # A tibble: 1,030 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     2     1      554            601        -7      920
+##  2  2013     2     1      654            700        -6     1032
+##  3  2013     2     1      657            705        -8     1027
+##  4  2013     2     1      658            700        -2     1018
+##  5  2013     2     1      722            705        17     1040
+##  6  2013     2     1      807            730        37     1134
+##  7  2013     2     1      826            830        -4     1206
+##  8  2013     2     1      857            900        -3     1225
+##  9  2013     2     1      859            900        -1     1251
+## 10  2013     2     1      901            905        -4     1230
+## # ... with 1,020 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+<p>{{<admonition title="Exercise - Filtering data">}} Let’s do several more examples to make sure you’re super comfortable with filtering data:</p>
+<ul>
+<li><p>How many flights left before 6 AM?</p></li>
+<li><p>How many flights went to Toronto (YYZ)? Is there anything weird about this dataset?</p></li>
+<li><p>What is a typical flight time (air time) when traveling from New York to Chicago O’Hare (ORD)? {{</admonition>}}</p></li>
+</ul>
+</div>
+<div id="using-the-pipe" class="section level2">
+<h2>Using the “pipe”</h2>
+<p>The tidyverse heavily encourages the use of a special pipe (<code>%&gt;%</code> operator). The pipe sends the output of the last command to the first argument of the next (probably will be a familiar concept for users of bash, the Linux shell). This is a great tool for making our analyses more readable (read: good).</p>
+<p>Repeating an earlier example, we can retrieve the number of flights that went to LAX with:</p>
+<pre class="r"><code># earlier example:
+# nrow(filter(flights, dest == &quot;LAX&quot;))
+
+flights %&gt;% filter(dest == &quot;LAX&quot;) %&gt;% nrow</code></pre>
+<pre><code>## [1] 16174</code></pre>
+<p>Our analysis now flows from left to right, instead of inside out. Makes things quite a bit more readable. Many people also put each step on a new line. That way if you want to exclude a step, you can just comment it out.</p>
+<pre class="r"><code>flights %&gt;%
+    filter(dest == &quot;LAX&quot;) %&gt;%
+    nrow()</code></pre>
+<pre><code>## [1] 16174</code></pre>
+</div>
+<div id="controlling-output" class="section level2">
+<h2>Controlling output</h2>
+<p><code>dplyr</code> also has its own function for selecting columns: <code>select()</code>. To grab the certain columns from a dataframe, we supply their names to <code>select()</code> as arguments.</p>
+<pre class="r"><code>flights %&gt;% select(flight, dest, air_time)</code></pre>
+<pre><code>## # A tibble: 336,776 x 3
+##    flight  dest air_time
+##     &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;
+##  1   1545   IAH      227
+##  2   1714   IAH      227
+##  3   1141   MIA      160
+##  4    725   BQN      183
+##  5    461   ATL      116
+##  6   1696   ORD      150
+##  7    507   FLL      158
+##  8   5708   IAD       53
+##  9     79   MCO      140
+## 10    301   ORD      138
+## # ... with 336,766 more rows</code></pre>
+<p>We can also sort columns using <code>arrange()</code>. <code>arrange()</code> sorts a dataset by whatever column names you specify.</p>
+<pre class="r"><code>flights %&gt;% arrange(sched_dep_time)</code></pre>
+<pre><code>## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     7    27       NA            106        NA       NA
+##  2  2013     1     2      458            500        -2      703
+##  3  2013     1     3      458            500        -2      650
+##  4  2013     1     4      456            500        -4      631
+##  5  2013     1     5      458            500        -2      640
+##  6  2013     1     6      458            500        -2      718
+##  7  2013     1     7      454            500        -6      637
+##  8  2013     1     8      454            500        -6      625
+##  9  2013     1     9      457            500        -3      647
+## 10  2013     1    10      450            500       -10      634
+## # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+<p>To sort in descending order, we can add the <code>desc()</code> function into the mix.</p>
+<pre class="r"><code>flights %&gt;% arrange(desc(sched_dep_time))</code></pre>
+<pre><code>## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1     2353           2359        -6      425
+##  2  2013     1     1     2353           2359        -6      418
+##  3  2013     1     1     2356           2359        -3      425
+##  4  2013     1     2       42           2359        43      518
+##  5  2013     1     2     2351           2359        -8      427
+##  6  2013     1     2     2354           2359        -5      413
+##  7  2013     1     3       32           2359        33      504
+##  8  2013     1     3      235           2359       156      700
+##  9  2013     1     3     2349           2359       -10      434
+## 10  2013     1     4       25           2359        26      505
+## # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="data-analysis" class="section level2">
+<h2>Data analysis</h2>
+<p>So far we’ve learned how to to rearrange and select parts of our data. What about actually analyzing it. The <code>group_by()</code> and <code>summarize()</code> functions, allow us to group by a certain column (say, city or airline), and then perform an operation on every group.</p>
+<p>A simple example might be grouping by month and then summarizing by the number of flights (rows) in each group.</p>
+<pre class="r"><code>flights %&gt;%
+    group_by(month) %&gt;%
+    summarize(length(month))  # number of records in a group</code></pre>
+<pre><code>## # A tibble: 12 x 2
+##    month `length(month)`
+##    &lt;int&gt;           &lt;int&gt;
+##  1     1           27004
+##  2     2           24951
+##  3     3           28834
+##  4     4           28330
+##  5     5           28796
+##  6     6           28243
+##  7     7           29425
+##  8     8           29327
+##  9     9           27574
+## 10    10           28889
+## 11    11           27268
+## 12    12           28135</code></pre>
+<p>We can also perform multiple “summarizations” at once and name our columns something informative.</p>
+<pre class="r"><code>flights %&gt;%
+    group_by(month) %&gt;%
+    summarize(num_flights=length(month),
+              avg_flight_time=mean(air_time, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 12 x 3
+##    month num_flights avg_flight_time
+##    &lt;int&gt;       &lt;int&gt;           &lt;dbl&gt;
+##  1     1       27004        154.1874
+##  2     2       24951        151.3464
+##  3     3       28834        149.0770
+##  4     4       28330        153.1011
+##  5     5       28796        145.7275
+##  6     6       28243        150.3252
+##  7     7       29425        146.7283
+##  8     8       29327        148.1604
+##  9     9       27574        143.4712
+## 10    10       28889        148.8861
+## 11    11       27268        155.4686
+## 12    12       28135        162.5914</code></pre>
+<p>We can also simply add on a column to a dataset with the <code>mutate()</code> function. This is the equivalent of <code>cats$age &lt;- c(1, 3, 4)</code> like we did earlier.</p>
+<pre class="r"><code>colnames(flights)</code></pre>
+<pre><code>##  [1] &quot;year&quot;           &quot;month&quot;          &quot;day&quot;            &quot;dep_time&quot;      
+##  [5] &quot;sched_dep_time&quot; &quot;dep_delay&quot;      &quot;arr_time&quot;       &quot;sched_arr_time&quot;
+##  [9] &quot;arr_delay&quot;      &quot;carrier&quot;        &quot;flight&quot;         &quot;tailnum&quot;       
+## [13] &quot;origin&quot;         &quot;dest&quot;           &quot;air_time&quot;       &quot;distance&quot;      
+## [17] &quot;hour&quot;           &quot;minute&quot;         &quot;time_hour&quot;</code></pre>
+<pre class="r"><code>new_flights &lt;- flights %&gt;%
+    mutate(plane_speed = distance / air_time)
+colnames(flights)</code></pre>
+<pre><code>##  [1] &quot;year&quot;           &quot;month&quot;          &quot;day&quot;            &quot;dep_time&quot;      
+##  [5] &quot;sched_dep_time&quot; &quot;dep_delay&quot;      &quot;arr_time&quot;       &quot;sched_arr_time&quot;
+##  [9] &quot;arr_delay&quot;      &quot;carrier&quot;        &quot;flight&quot;         &quot;tailnum&quot;       
+## [13] &quot;origin&quot;         &quot;dest&quot;           &quot;air_time&quot;       &quot;distance&quot;      
+## [17] &quot;hour&quot;           &quot;minute&quot;         &quot;time_hour&quot;</code></pre>
+<p>{{<admonition title="Exercise - Finding the worst airline">}} Which airline has the worst record in terms of delays?</p>
+<p>To do this, group our data by carrier, get the average arrival delay for each group, then sort in descending order so that the worst offenders are at the top. {{</admonition>}}</p>
+<p>{{<admonition title="Excercise - Picking an analysis method">}} Get the maximum arrival delay in the dataset. You’ll want to use the <code>max()</code> function. Did you need to use <code>dplyr</code>? {{</admonition>}}</p>
+</div>
+<div id="putting-dataframes-together" class="section level2">
+<h2>Putting dataframes together</h2>
+<p>In terms of some data, the <code>flights</code> table is actually incomplete! What if we wanted to match up the destination airport acronyms to their details (like airports’ full names)? This data is actually in another table: <code>airports</code>.</p>
+<pre class="r"><code>head(airports)</code></pre>
+<pre><code>## # A tibble: 6 x 8
+##     faa                           name      lat       lon   alt    tz
+##   &lt;chr&gt;                          &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+## 1   04G              Lansdowne Airport 41.13047 -80.61958  1044    -5
+## 2   06A  Moton Field Municipal Airport 32.46057 -85.68003   264    -6
+## 3   06C            Schaumburg Regional 41.98934 -88.10124   801    -6
+## 4   06N                Randall Airport 41.43191 -74.39156   523    -5
+## 5   09J          Jekyll Island Airport 31.07447 -81.42778    11    -5
+## 6   0A9 Elizabethton Municipal Airport 36.37122 -82.17342  1593    -5
+## # ... with 2 more variables: dst &lt;chr&gt;, tzone &lt;chr&gt;</code></pre>
+<p>In order for this information to be useful to us, we need to match it up and “join” it to our flights table. This is a pretty complex operation in base R, but <code>dplyr</code> makes it relatively easy.</p>
+<p>There are a lot of different types of joins that put together data in different ways. In this case, we’re going to do what’s called a “left join”: one table is on the left side, and we’ll keep all of its data. However, on the right side (the table we are joining), we’ll only match up and add each entry if there is a corresponding entry on the left side.</p>
+<pre class="r"><code>colnames(flights)</code></pre>
+<pre><code>##  [1] &quot;year&quot;           &quot;month&quot;          &quot;day&quot;            &quot;dep_time&quot;      
+##  [5] &quot;sched_dep_time&quot; &quot;dep_delay&quot;      &quot;arr_time&quot;       &quot;sched_arr_time&quot;
+##  [9] &quot;arr_delay&quot;      &quot;carrier&quot;        &quot;flight&quot;         &quot;tailnum&quot;       
+## [13] &quot;origin&quot;         &quot;dest&quot;           &quot;air_time&quot;       &quot;distance&quot;      
+## [17] &quot;hour&quot;           &quot;minute&quot;         &quot;time_hour&quot;</code></pre>
+<pre class="r"><code>colnames(airports)</code></pre>
+<pre><code>## [1] &quot;faa&quot;   &quot;name&quot;  &quot;lat&quot;   &quot;lon&quot;   &quot;alt&quot;   &quot;tz&quot;    &quot;dst&quot;   &quot;tzone&quot;</code></pre>
+<pre class="r"><code># join syntax:
+# left_join(left_table, right_table, by=c(&quot;left_colname&quot; = &quot;right_colname&quot;))
+# the &quot;by&quot; argument controls which columns in each table are matched up
+joined &lt;- left_join(flights, airports, by=c(&quot;dest&quot; = &quot;faa&quot;))
+colnames(joined)  # joined now contain columns from both</code></pre>
+<pre><code>##  [1] &quot;year&quot;           &quot;month&quot;          &quot;day&quot;            &quot;dep_time&quot;      
+##  [5] &quot;sched_dep_time&quot; &quot;dep_delay&quot;      &quot;arr_time&quot;       &quot;sched_arr_time&quot;
+##  [9] &quot;arr_delay&quot;      &quot;carrier&quot;        &quot;flight&quot;         &quot;tailnum&quot;       
+## [13] &quot;origin&quot;         &quot;dest&quot;           &quot;air_time&quot;       &quot;distance&quot;      
+## [17] &quot;hour&quot;           &quot;minute&quot;         &quot;time_hour&quot;      &quot;name&quot;          
+## [21] &quot;lat&quot;            &quot;lon&quot;            &quot;alt&quot;            &quot;tz&quot;            
+## [25] &quot;dst&quot;            &quot;tzone&quot;</code></pre>
+<p>Let’s check our work. SEA should show up as Seattle-Tacoma International Airport. Note: we can use <code>.</code> as a placeholder to represent the entire object passed to the summarize function (instead of using just a column name, for instance).</p>
+<pre class="r"><code>joined %&gt;%
+    filter(dest == &quot;SEA&quot;) %&gt;%
+    select(name) %&gt;%
+    head(n=1)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##                  name
+##                 &lt;chr&gt;
+## 1 Seattle Tacoma Intl</code></pre>
+<p>Looks like our join worked!</p>
+<p>{{<admonition title="Exercise - Worst airline, part II">}} Find the name of the airline with the biggest arrival delays. You will need to join the <code>airlines</code> table to the <code>flights</code> table. A suggested workflow is shown below (feel free to reuse code from earlier).</p>
+<ul>
+<li>Calculate the average arrival delays by airline.</li>
+<li>Sort the result by average delay in descending order.</li>
+<li>Find which columns match up between the <code>airlines</code> and <code>flights</code> tables. Remember, you can use <code>print(table_name, width=Inf)</code> to show all columns!</li>
+<li>Join the <code>airlines</code> table to the <code>flights</code> table based upon their common column.</li>
+<li>The top value is your answer. {{</admonition>}}</li>
+</ul>
+<p>{{<admonition title="Exercise - Writing output">}} Write your results from the last problem to a file. Use the <code>write_csv()</code> to write the table to a csv file. You can use <code>?write_csv()</code> to look up how to use this function. {{</admonition>}}</p>
+</div>
+<div id="next-section" class="section level2">
+<h2><a href="../ggplot2/">Next section</a></h2>
 </div>

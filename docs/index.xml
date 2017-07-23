@@ -63,5 +63,14 @@ In this case, there are three main camps on analyzing dataframes in R:
  “Base R” - “Base R” means using only functions and stuff built into your base R installation.</description>
     </item>
     
+    <item>
+      <title>Pretty plots with ggplot2</title>
+      <link>/hpc-r/ggplot2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/ggplot2/</guid>
+      <description>placeholder</description>
+    </item>
+    
   </channel>
 </rss>

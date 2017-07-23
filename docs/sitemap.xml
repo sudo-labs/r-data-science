@@ -23,6 +23,10 @@
   </url>
   
   <url>
+    <loc>/hpc-r/ggplot2/</loc>
+  </url>
+  
+  <url>
     <loc>/hpc-r/categories/</loc>
     <priority>0</priority>
   </url>
