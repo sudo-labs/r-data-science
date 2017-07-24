@@ -1,0 +1,77 @@
+---
+title: "Profiling"
+draft: true
+menu: main
+weight: 8
+---
+
+## Comparing code speed
+
+The base R language is very, very slow.
+However, a lot of the packages and functions in R have been
+written in C/C++/Fortran and are very, very fast.
+So depending on what functions we use to do things, 
+we can get significantly faster performance.
+Of course, this depends on us being able to measure how fast
+our code is in the first place.
+
+To measure how fast a bit of code is, we can benchmark it.
+The easiest way of benchmarking our code is with the 
+`microbenchmark` package.
+`microbenchmark` provides just one function - `microbenchmark()`.
+
+Let's try an example. 
+There are two ways of doing a square root - which is faster?
+
+* sqrt(number)
+* number ^ 0.5
+
+`microbenchmark()` will run each set of code 100 times
+(can be changed with the `times` argument), 
+then return a summary table of how long it took our code to run.
+We are usually interested in the median value
+(the mean is more affected by crazy outliers in execution speed).
+
+```{r}
+library(microbenchmark)
+microbenchmark(
+			   sqrt(10),
+			   10 ^ 0.5
+			   )
+```
+
+In this case, the `sqrt()` function was quite a bit faster,
+likely because of some optimization specific to doing a square root 
+(as opposed to exponentiation operations in general).
+Now we can measure how fast two pieces of code are.
+
+{{<admonition title="The R compiler" type="note">}}
+R has a JIT (just in time) compiler that is enabled by default.
+You don't need to worry about compiling your code with the
+`compiler::cmpfun()` function, 
+because it is already done for you automatically!
+{{</admonition>}}
+
+## Profiling code
+
+`microbenchmark()` is an extremely useful tool for determining which
+several blocks of several approaches is faster.
+But it does not highlight areas that need to be improved -
+which elements of a chunk of code take the longest amount of time to run.
+This second technique is called profiling.
+It is used to identify the slow parts of our code so we can focus on fixing them.
+
+We'll use the `profvis` package for this task.
+`profvis` executes a chunk of code (everything between the `{}`),
+and displays a nice interactive graph that shows where time was spent
+in each line of our code.
+It also steps into the functions that get called by our code - 
+there is no need to `profvis()` our function, 
+then `profvis()` the code that it calls, etc., etc.
+
+```{r}
+library(profvis)
+
+```
+
+

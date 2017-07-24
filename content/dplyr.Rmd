@@ -484,5 +484,5 @@ Use the `write_csv()` to write the table to a csv file.
 You can use `?write_csv()` to look up how to use this function.
 {{</admonition>}}
 
-## [Next section](../ggplot2/)
+## [Next section](../control/)
 

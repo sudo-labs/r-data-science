@@ -64,12 +64,33 @@ In this case, there are three main camps on analyzing dataframes in R:
     </item>
     
     <item>
+      <title>Writing functions</title>
+      <link>/hpc-r/control/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/control/</guid>
+      <description>Being able to group by and summarize data is great. But so far all we know how to do is use canned functions - ones that come with base R or one of the packages we’ve covered. We’ll need to write our own functions eventually.
+Functions in R are defined almost the same as variables. The general syntax looks like this:
+name &amp;lt;- function(reqd_arg, optional_arg=42) { # do stuff return(result) } Let’s create a function that adds two numbers together as an example.</description>
+    </item>
+    
+    <item>
       <title>Pretty plots with ggplot2</title>
       <link>/hpc-r/ggplot2/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/hpc-r/ggplot2/</guid>
-      <description>placeholder</description>
+      <description>Though this is technically a course on high-performance computing. I would be doing newcomers a disservice if we did not at least quickly cover how plotting works in R. We’ll also be profiling some ggplot2 code in the next section as an example.</description>
+    </item>
+    
+    <item>
+      <title>Profiling</title>
+      <link>/hpc-r/profiling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hpc-r/profiling/</guid>
+      <description>Comparing code speed The base R language is very, very slow. However, a lot of the packages and functions in R have been written in C/C++/Fortran and are very, very fast. So depending on what functions we use to do things, we can get significantly faster performance. Of course, this depends on us being able to measure how fast our code is in the first place.
+To measure how fast a bit of code is, we can benchmark it.</description>
     </item>
     
   </channel>

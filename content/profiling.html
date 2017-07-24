@@ -1,0 +1,37 @@
+---
+title: "Profiling"
+draft: true
+menu: main
+weight: 8
+---
+
+
+
+<div id="comparing-code-speed" class="section level2">
+<h2>Comparing code speed</h2>
+<p>The base R language is very, very slow. However, a lot of the packages and functions in R have been written in C/C++/Fortran and are very, very fast. So depending on what functions we use to do things, we can get significantly faster performance. Of course, this depends on us being able to measure how fast our code is in the first place.</p>
+<p>To measure how fast a bit of code is, we can benchmark it. The easiest way of benchmarking our code is with the <code>microbenchmark</code> package. <code>microbenchmark</code> provides just one function - <code>microbenchmark()</code>.</p>
+<p>Let’s try an example. There are two ways of doing a square root - which is faster?</p>
+<ul>
+<li>sqrt(number)</li>
+<li>number ^ 0.5</li>
+</ul>
+<p><code>microbenchmark()</code> will run each set of code 100 times (can be changed with the <code>times</code> argument), then return a summary table of how long it took our code to run. We are usually interested in the median value (the mean is more affected by crazy outliers in execution speed).</p>
+<pre class="r"><code>library(microbenchmark)
+microbenchmark(
+               sqrt(10),
+               10 ^ 0.5
+               )</code></pre>
+<pre><code>## Unit: nanoseconds
+##      expr min    lq   mean median    uq  max neval
+##  sqrt(10) 106 112.0 138.76    116 128.0 1619   100
+##    10^0.5 252 260.5 322.61    268 275.5 4958   100</code></pre>
+<p>In this case, the <code>sqrt()</code> function was quite a bit faster, likely because of some optimization specific to doing a square root (as opposed to exponentiation operations in general). Now we can measure how fast two pieces of code are.</p>
+<p>{{<admonition title="The R compiler" type="note">}} R has a JIT (just in time) compiler that is enabled by default. You don’t need to worry about compiling your code with the <code>compiler::cmpfun()</code> function, because it is already done for you automatically! {{</admonition>}}</p>
+</div>
+<div id="profiling-code" class="section level2">
+<h2>Profiling code</h2>
+<p><code>microbenchmark()</code> is an extremely useful tool for determining which several blocks of several approaches is faster. But it does not highlight areas that need to be improved - which elements of a chunk of code take the longest amount of time to run. This second technique is called profiling. It is used to identify the slow parts of our code so we can focus on fixing them.</p>
+<p>We’ll use the <code>profvis</code> package for this task. <code>profvis</code> executes a chunk of code (everything between the <code>{}</code>), and displays a nice interactive graph that shows where time was spent in each line of our code. It also steps into the functions that get called by our code - there is no need to <code>profvis()</code> our function, then <code>profvis()</code> the code that it calls, etc., etc.</p>
+<pre class="r"><code>library(profvis)</code></pre>
+</div>

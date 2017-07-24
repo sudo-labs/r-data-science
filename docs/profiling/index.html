@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head lang="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+	<meta name="description" content="Making your R code just a little bit faster...">
+	<meta name="generator" content="Hugo 0.24.1" />
+	
+	<title>Profiling &mdash; HPC R</title>
+	
+	<link rel="stylesheet" href="/hpc-r/css/alabaster.css" type="text/css" />
+	<link rel="stylesheet" href="/hpc-r/css/highlight.css" type="text/css" />
+
+	
+
+	<link rel="shortcut icon" href="/hpc-r/favicon.ico" type="image/x-icon"/>
+</head>
+
+	<body role="document">
+		<div class="document">
+			<div class="documentwrapper">
+				<div class="bodywrapper">
+					<div class="body" role="main">
+						
+	<h1>Profiling</h1>
+	
+	<div id="comparing-code-speed" class="section level2">
+<h2>Comparing code speed</h2>
+<p>The base R language is very, very slow. However, a lot of the packages and functions in R have been written in C/C++/Fortran and are very, very fast. So depending on what functions we use to do things, we can get significantly faster performance. Of course, this depends on us being able to measure how fast our code is in the first place.</p>
+<p>To measure how fast a bit of code is, we can benchmark it. The easiest way of benchmarking our code is with the <code>microbenchmark</code> package. <code>microbenchmark</code> provides just one function - <code>microbenchmark()</code>.</p>
+<p>Let’s try an example. There are two ways of doing a square root - which is faster?</p>
+<ul>
+<li>sqrt(number)</li>
+<li>number ^ 0.5</li>
+</ul>
+<p><code>microbenchmark()</code> will run each set of code 100 times (can be changed with the <code>times</code> argument), then return a summary table of how long it took our code to run. We are usually interested in the median value (the mean is more affected by crazy outliers in execution speed).</p>
+<pre class="r"><code>library(microbenchmark)
+microbenchmark(
+               sqrt(10),
+               10 ^ 0.5
+               )</code></pre>
+<pre><code>## Unit: nanoseconds
+##      expr min    lq   mean median    uq  max neval
+##  sqrt(10) 106 112.0 138.76    116 128.0 1619   100
+##    10^0.5 252 260.5 322.61    268 275.5 4958   100</code></pre>
+<p>In this case, the <code>sqrt()</code> function was quite a bit faster, likely because of some optimization specific to doing a square root (as opposed to exponentiation operations in general). Now we can measure how fast two pieces of code are.</p>
+<div class="admonition note">
+<p class="first admonition-title">The R compiler</p>
+<p>R has a JIT (just in time) compiler that is enabled by default. You don’t need to worry about compiling your code with the <code>compiler::cmpfun()</code> function, because it is already done for you automatically!</p>
+</div>
+</div>
+<div id="profiling-code" class="section level2">
+<h2>Profiling code</h2>
+<p><code>microbenchmark()</code> is an extremely useful tool for determining which several blocks of several approaches is faster. But it does not highlight areas that need to be improved - which elements of a chunk of code take the longest amount of time to run. This second technique is called profiling. It is used to identify the slow parts of our code so we can focus on fixing them.</p>
+<p>We’ll use the <code>profvis</code> package for this task. <code>profvis</code> executes a chunk of code (everything between the <code>{}</code>), and displays a nice interactive graph that shows where time was spent in each line of our code. It also steps into the functions that get called by our code - there is no need to <code>profvis()</code> our function, then <code>profvis()</code> the code that it calls, etc., etc.</p>
+<pre class="r"><code>library(profvis)</code></pre>
+</div>
+
+
+
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+	<div class="sphinxsidebarwrapper">
+		<p class="logo">
+			<a href="/hpc-r/">
+				<img class="logo" src="/hpc-r/favicon.ico" alt="Logo"/>
+				<h1 class="logo logo-name">HPC R</h1>
+			</a>
+		</p>
+		
+		<p class="blurb">Making your R code just a little bit faster&hellip;</p>
+
+		
+
+	
+
+	
+
+	
+		
+
+		
+
+<h3>Navigation</h3>
+<ul>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/">High-performance R</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/basics/">Basic Syntax</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/vectors/">Vectors and indexing</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/dataframes/">Dataframes</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/dplyr/">Data analysis with dplyr</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/control/">Writing functions</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/ggplot2/">Pretty plots with ggplot2</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/profiling/">Profiling</a>
+	</li>
+	
+</ul>
+
+
+		
+
+	</div>
+</div>
+<div class="clearer"></div>
+</div>
+			<div class="footer">
+	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
+	|
+	Powered by <a href="http://gohugo.io/">Hugo 0.24.1</a>
+	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>
+	
+</div>
+
+
+
+
+			
+
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+			<script>hljs.initHighlightingOnLoad();</script>
+			
+
+			
+		</div>
+	</body>
+</html>

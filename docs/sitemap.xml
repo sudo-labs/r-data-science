@@ -23,7 +23,15 @@
   </url>
   
   <url>
+    <loc>/hpc-r/control/</loc>
+  </url>
+  
+  <url>
     <loc>/hpc-r/ggplot2/</loc>
+  </url>
+  
+  <url>
+    <loc>/hpc-r/profiling/</loc>
   </url>
   
   <url>
