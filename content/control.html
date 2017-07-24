@@ -60,6 +60,20 @@ if (number &gt; 4) {
 <div id="running-functions-on-stuff-besides-dataframes" class="section level2">
 <h2>Running functions on stuff besides dataframes</h2>
 <p>The <code>dplyr</code> package is very cool, but what if we want to perform analyses on stuff besides dataframes (like vectors and matrices!)? We’ll need to use the <code>purrr</code> package (also bundled with <code>tidyverse</code>).</p>
+<p>Though we could use a for loop like this, there is a more efficient way of doing things:</p>
+<pre class="r"><code>for (i in 1:10) {
+    print(i)
+}</code></pre>
+<pre><code>## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10</code></pre>
 <p><code>purrr</code> provides a set of functions to provide map/reduce-style functionality. “Map” means to apply a function to every piece of a dataset. “Reduce” means to calculate some kind of summary statistic on a large group of data.</p>
 <p>Let’s demonstrate with several examples using <code>map()</code>. The function requires two arguments, something to iterate over, and a function to apply to each piece.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
@@ -186,5 +200,5 @@ apply(mat, 2, sum)</code></pre>
 <pre><code>##  [1]  15  40  65  90 115 140 165 190 215 240</code></pre>
 </div>
 <div id="next-section" class="section level2">
-<h2><a href="../profiling/">Next section</a></h2>
+<h2><a href="../ggplot2/">Next section</a></h2>
 </div>
