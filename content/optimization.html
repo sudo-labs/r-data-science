@@ -1,0 +1,264 @@
+---
+title: "Performance optimizations"
+draft: true
+menu: main
+weight: 9
+---
+
+
+
+<p>Now that we know how to measure our code speed, we can focus on making it faster. We’ve actually covered a number of important performance optimizations already.</p>
+<p>To recap:</p>
+<ul>
+<li><p>Avoid memory bloat and costly reassignment by doing things in-place: do not create unnecessary variables.</p></li>
+<li><p>Factors are an efficent way of saving memory when working with repetitive strings.</p></li>
+<li><p>Avoid indexing out-of-bounds. We’ll cover another variant of this here as well.</p></li>
+<li><p><code>tidyverse</code> packages are typically optimized out of the box - as long as we’re using <code>tidyverse</code> functions, we can be reasonably confident that some optimization has already been done (these functions also sidestep several performance traps).</p></li>
+<li><p>The <code>apply()</code> function offers superior performance when working with matrices.</p></li>
+<li><p>We don’t need to do anything to gain the benefits of R’s JIT compiler - it’s on by default.</p></li>
+</ul>
+<p>We’ll now walk through a few other common optimizations we can use. This will be done by example - we’ll show exactly why each tip is here.</p>
+<div id="preallocate-your-results" class="section level2">
+<h2>Preallocate your results</h2>
+<p>We’ll cover two examples of the same piece of code: in this case, just creating a sequence of numbers of a certain length. We will use a for loop for clarity. For the first case (<code>dynamic</code>), we will grow the variable <code>sequence</code> with each iteration of our loop. In the second case, we will create <code>sequence</code> beforehand at its expected final size.</p>
+<pre class="r"><code>dynamic &lt;- function(size) {
+  sequence &lt;- NA
+  for (i in 1:size) {
+    sequence[i] &lt;- i
+  }
+  return(sequence)
+}
+
+preallocated &lt;- function(size) {
+  sequence &lt;- rep(NA, size)
+  for (i in 1:size) {
+    sequence[i] &lt;- i
+  }
+  return(sequence)
+}
+
+library(microbenchmark)
+microbenchmark(dynamic(10),
+               dynamic(100),
+               dynamic(1000),
+               dynamic(10000),
+               preallocated(10),
+               preallocated(100),
+               preallocated(1000),
+               preallocated(10000))</code></pre>
+<pre><code>## Unit: microseconds
+##                 expr      min        lq       mean    median        uq
+##          dynamic(10)    4.303    4.6225    5.39535    4.8335    5.6945
+##         dynamic(100)   33.187   35.1725  592.99399   36.3125   38.5955
+##        dynamic(1000)  300.878  309.2615  322.81745  316.5940  324.5985
+##       dynamic(10000) 2901.679 2968.6115 3455.41836 3054.1460 3784.6745
+##     preallocated(10)    2.448    2.7895    3.83774    3.0480    4.0030
+##    preallocated(100)   10.503   11.1360   12.99288   11.6535   14.2045
+##   preallocated(1000)   88.906   90.2615   96.50840   92.3620   99.8060
+##  preallocated(10000)  874.531  883.1615 1038.50630  897.0790  996.3640
+##        max neval
+##     13.590   100
+##  52620.894   100
+##    426.848   100
+##   5898.517   100
+##     10.221   100
+##     34.347   100
+##    133.218   100
+##   4514.000   100</code></pre>
+<p>Preallocating the <code>sequence</code> variable of our loop performed better in every case. Intriguingly, the speed advantage of preallocating sequence vs. dynamically growing it actually increases with larger sizes. The reason for the difference in speed is caused by how R handles stored objects in memory. Every time it has to make <code>sequence</code> bigger, R actually has to create a copy of sequence at the new size, and then add <code>i</code> to the new object. By preallocating sequence at its final size, we avoid all of this unnecessary copying.</p>
+<pre class="r"><code>microbenchmark(
+  dynamic(10000),
+  preallocated(10000)
+)</code></pre>
+<pre><code>## Unit: microseconds
+##                 expr      min        lq      mean    median       uq
+##       dynamic(10000) 2966.917 3040.8905 3413.0516 3142.1405 3305.187
+##  preallocated(10000)  879.540  892.1395  963.3869  908.2045  950.823
+##       max neval
+##  9097.408   100
+##  2426.776   100</code></pre>
+<p>This applies to complex structures like dataframes as well. Do not ever use a function like <code>rbind</code> to dynamically grow your dataframe. An excellent way of sidestepping this issue is to use the corresponding <code>tidyverse</code> functionality.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+<pre class="r"><code>library(nycflights13)
+microbenchmark(
+  rbind = {
+    results &lt;- NA
+    for (row in 1:nrow(airports)) {
+      results &lt;- rbind(airports[row, ], results)
+    }
+  },
+  # map_df returns a dataframe
+  map_df = 1:nrow(airports) %&gt;% map_df(~airports[.x, ]),
+  times = 5
+)</code></pre>
+<pre><code>## Unit: milliseconds
+##    expr      min        lq      mean    median        uq       max neval
+##   rbind 1074.174 1076.8618 1097.5131 1082.1986 1100.3332 1153.9977     5
+##  map_df  420.405  427.2827  435.8341  431.7165  436.6419  463.1246     5</code></pre>
+</div>
+<div id="use-vectorized-code" class="section level2">
+<h2>Use vectorized code</h2>
+<p>Many of R’s core functions use actually use ultra-fast code written in other programming languages like C and Fortran. One major example of this is using R’s vectorized operators and functions (that take a vector as input and return a vector as output). One example of this is adding a number to a vector: in the first case, we will simply add 10 to a set of 1000 random numbers with the + operator. In the second case, we will loop over all 1000 numbers and add 10 to each. We’ll also use <code>map</code> to compare things to the tidyverse as well.</p>
+<pre class="r"><code>randoms &lt;- runif(1000)
+
+microbenchmark(vectorized = randoms + 10, 
+               map = map(randoms, ~.x + 10),
+               for_loop = for (i in 1:1000) {
+                 randoms[i] + 10
+               })</code></pre>
+<pre><code>## Unit: microseconds
+##        expr      min        lq       mean    median        uq      max
+##  vectorized    2.188    3.1275    3.83059    3.7420    4.4160    6.249
+##         map  826.833  851.2180  938.34245  865.2255  885.2175 2961.702
+##    for_loop 2509.619 2530.4175 2631.85411 2554.9060 2591.9530 4557.381
+##  neval
+##    100
+##    100
+##    100</code></pre>
+<p>Generally speaking, vectorized code is the fastest choice. Do it whenever you can!</p>
+</div>
+<div id="avoid-creating-unnecessary-variables---part-ii" class="section level2">
+<h2>Avoid creating unnecessary variables - Part II</h2>
+<p>The more things you make your computer do, the longer it will take. Saving variables with <code>&lt;-</code> is not always an instantaneous operation, especially if the variables you are saving are comparatively large. This is true even for inline assignments (<code>x &lt;- x + 1</code>). In this case we will calculate the mean <code>gdpPercap</code> for a particular country using the <code>gapminder</code> dataset. In our <code>extra_variables()</code> function, we will save all of the data for the country of interest as <code>countryData</code>, then calculate the mean <code>gdpPercap</code>. In the second case, we calculate <code>gdpPercap</code> in a single step.</p>
+<pre class="r"><code>library(gapminder)
+
+extra_variables &lt;- function(country) {
+  countryData &lt;- gapminder[gapminder$country == country, ]
+  return(mean(countryData$gdpPercap))
+}
+
+less_variables &lt;- function(country) {
+  return(mean(gapminder$gdpPercap[gapminder$country == country]))
+}
+
+microbenchmark(
+  extra_variables = extra_variables(&quot;Germany&quot;), 
+  less_variables = less_variables(&quot;Germany&quot;)
+)</code></pre>
+<pre><code>## Unit: microseconds
+##             expr     min       lq     mean  median       uq      max neval
+##  extra_variables 513.763 519.1125 580.9491 522.590 526.8455 3976.139   100
+##   less_variables 198.036 200.7260 263.3015 202.874 204.8295 3405.678   100</code></pre>
+</div>
+<div id="avoid-using-the-hard-disk-if-you-can" class="section level2">
+<h2>Avoid using the hard disk if you can</h2>
+<p>Using the hard disk on your computer is an extremely slow operation. Objects stored in memory (the R workspace) are orders of magnitude faster to access. If one of your scripts is reading or writing to disk repeatedly, your code will be limited by your disk I/O speed, which is well below your memory I/O speed.</p>
+<p>As an example of this, let’s save the flights dataset in memory and then read it back. We will then do the same thing, but instead of using memory, we will save it to disk and then read it back.</p>
+<pre class="r"><code>microbenchmark(
+  memory = {
+    new_flights &lt;- flights
+    head(new_flights)
+  },
+  disk = {
+    write.csv(flights, &quot;flights.csv&quot;)
+    new_flights &lt;- read.csv(&quot;flights.csv&quot;)
+    head(new_flights)
+  },
+  times = 1
+)</code></pre>
+<pre><code>## Unit: milliseconds
+##    expr        min         lq       mean     median         uq        max
+##  memory   633.5684   633.5684   633.5684   633.5684   633.5684   633.5684
+##    disk 10589.6842 10589.6842 10589.6842 10589.6842 10589.6842 10589.6842
+##  neval
+##      1
+##      1</code></pre>
+<p>Using memory was much faster than using the disk. However, if we do need to use the disk somewhere in your analysis, there are a few things you can do to speed things along.</p>
+</div>
+<div id="when-you-write-to-disk-use-readr" class="section level2">
+<h2>When you write to disk, use <code>readr</code></h2>
+<p><code>readr</code> is an I/O library from the tidyverse. It has a number of improvements over base R’s I/O functions, both in terms of usability and performance.</p>
+<pre class="r"><code>microbenchmark(
+  base_r = {
+    write.csv(flights, &quot;flights.csv&quot;)
+    new_flights &lt;- read.csv(&quot;flights.csv&quot;)
+    head(new_flights)
+  },
+  readr = {
+    write_csv(flights, &quot;flights.csv&quot;)
+    new_flights &lt;- read_csv(&quot;flights.csv&quot;)
+    head(new_flights)
+  },
+  times = 1
+)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   year = col_integer(),
+##   month = col_integer(),
+##   day = col_integer(),
+##   dep_time = col_integer(),
+##   sched_dep_time = col_integer(),
+##   dep_delay = col_integer(),
+##   arr_time = col_integer(),
+##   sched_arr_time = col_integer(),
+##   arr_delay = col_integer(),
+##   carrier = col_character(),
+##   flight = col_integer(),
+##   tailnum = col_character(),
+##   origin = col_character(),
+##   dest = col_character(),
+##   air_time = col_integer(),
+##   distance = col_integer(),
+##   hour = col_integer(),
+##   minute = col_integer(),
+##   time_hour = col_datetime(format = &quot;&quot;)
+## )</code></pre>
+<pre><code>## Unit: seconds
+##    expr      min       lq     mean   median       uq      max neval
+##  base_r 9.664928 9.664928 9.664928 9.664928 9.664928 9.664928     1
+##   readr 2.925772 2.925772 2.925772 2.925772 2.925772 2.925772     1</code></pre>
+<p>In this case, using <code>readr</code>’s I/O functions was roughly four times as fast.</p>
+</div>
+<div id="one-big-write-beats-a-thousand-little-writes" class="section level2">
+<h2>One big write beats a thousand little writes</h2>
+<p>One thing scientists really like to do is iterate through a dataset, and append the results to a file after ever iteration. This is <strong><em>extremely slow</em></strong>, especially on compute clusters where network filesystem latency is high. Don’t do it. Wherever possible, aggregrate the results in memory, then write results to a file all at once.</p>
+<pre class="r"><code>microbenchmark(
+  individual_writes = {
+    for (row in 1:10000) {
+      write_csv(flights[row, ], &quot;flights.csv&quot;, append = TRUE)
+    }
+  },
+  sequential_write = {
+    write_csv(flights[1:10000, ], &quot;flights.csv&quot;)
+  },
+  times = 1
+)</code></pre>
+<pre><code>## Unit: milliseconds
+##               expr       min        lq      mean    median        uq
+##  individual_writes 7672.4325 7672.4325 7672.4325 7672.4325 7672.4325
+##   sequential_write   48.9974   48.9974   48.9974   48.9974   48.9974
+##        max neval
+##  7672.4325     1
+##    48.9974     1</code></pre>
+</div>
+<div id="avoid-type-coercion" class="section level2">
+<h2>Avoid type coercion</h2>
+<p>R is meant to be a user-friendly language. It does things behind the scenes sometimes without telling us, usually to make things easier to work with. One of these is automatic type coercion: if a new type of data is added to a collection of existing elements of a different type of data, R will convert the datastructure automatically, which is a solid performance hit. This often happens without us knowing, and is especially common when working with integers.</p>
+<pre class="r"><code>microbenchmark(
+  type_coercion = {
+    integers &lt;- as.integer(1:100000)
+    integers[7] &lt;- as.numeric(7.3)
+  },
+  no_coercion = {
+    integers &lt;- as.integer(1:100000)
+    integers[7] &lt;- as.integer(7.3)
+  }
+)</code></pre>
+<pre><code>## Unit: microseconds
+##           expr     min       lq     mean   median       uq      max neval
+##  type_coercion 268.012 408.2245 489.3722 447.9640 487.9905 5600.283   100
+##    no_coercion 100.867 140.1930 160.7115 158.5415 173.3910  314.462   100</code></pre>
+<p>This is a fairly tame example, but when working with a matrix of millions (or billions) of elements, the performance hit can be massive. The <code>map</code> functions from <code>purrr</code> are a useful tool here, because they will throw an error if an unwanted type tries to sneak in and convert our dataset.</p>
+</div>
+<div id="next-section" class="section level2">
+<h2><a href="../parallel/">Next section</a></h2>
+</div>

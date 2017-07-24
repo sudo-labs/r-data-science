@@ -1,0 +1,6 @@
+---
+title: "Parallel"
+date: 2017-07-24T13:32:20-04:00
+draft: true
+---
+
