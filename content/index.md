@@ -24,12 +24,10 @@ Topics covered include the following:
 
 * Basic R syntax and concepts
 * Doing work with the "tidyverse" packages (`dplyr`, `purrr`, `ggplot2`)
+* Measuring code performance
 * Common performance optimizations
 * Parallelization with `doParallel` and `plyr`
-* Parallelization of `dplyr` using `multidplyr`
-* Serial farming strategies
-* Making reproducible reports with `rmarkdown`
-* Writing R packages with `devtools`, `testthat`, and `roxygen2`
+* Parallelization with `multidplyr`
 
 ## Setup
 

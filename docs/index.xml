@@ -6,7 +6,6 @@
     <description>Recent content on HPC R</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 24 Jul 2017 13:32:20 -0400</lastBuildDate>
     
 	<atom:link href="/hpc-r/index.xml" rel="self" type="application/rss+xml" />
     
@@ -85,7 +84,7 @@ name &amp;lt;- function(reqd_arg, optional_arg=42) { # do stuff return(result) }
     </item>
     
     <item>
-      <title>Profiling</title>
+      <title>Measuring code speed</title>
       <link>/hpc-r/profiling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -95,7 +94,7 @@ To measure how fast a bit of code is, we can benchmark it.</description>
     </item>
     
     <item>
-      <title>Performance optimizations</title>
+      <title>Performance optimization</title>
       <link>/hpc-r/optimization/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -108,12 +107,13 @@ To recap:
     </item>
     
     <item>
-      <title>Parallel</title>
+      <title>Running code in parallel</title>
       <link>/hpc-r/parallel/</link>
-      <pubDate>Mon, 24 Jul 2017 13:32:20 -0400</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/hpc-r/parallel/</guid>
-      <description></description>
+      <description>Like the majority of programming languages, R runs on one CPU core by default. All modern CPUs have multiple cores. This means that there is typically spare computing power that goes unused when we run R. Using our other CPUs is often a very cheap way of making our code run faster. However, it is not the be all end all of getting better performance.
+In most cases, the number of CPUs on a system is rather limited.</description>
     </item>
     
   </channel>

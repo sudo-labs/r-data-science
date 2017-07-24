@@ -1,6 +1,282 @@
 ---
-title: "Parallel"
-date: 2017-07-24T13:32:20-04:00
+title: "Running code in parallel"
 draft: true
+menu: main
+weight: 10
 ---
 
+Like the majority of programming languages, R runs on one CPU core by default.
+All modern CPUs have multiple cores.
+This means that there is typically spare computing power that goes unused when we run R.
+Using our other CPUs is often a very cheap way of making our code run faster.
+However, it is not the be all end all of getting better performance.
+
+In most cases, the number of CPUs on a system is rather limited. 
+The maximum theoretical speedup from running in parallel is equal to the number
+of cores you have available. 
+Furthermore, not all code can be parallelized, and scaling is not always linear.
+If only 20 percent of your code can be run in parallel, 
+the maximum speedup from parallelization (even with an infinite number of cores), 
+would be just 20 percent.
+The performance gains in the last section were considerably more than that.
+Because of this, you should only pursue parallelization 
+if you've already done all you can to optimize your code. 
+Better code beats more hardware every time (it's also significantly less expensive).
+
+One final consideration is that we can only parallelize code where 
+each subset of a problem is completely independent from other subsets.
+If each result depends on the last, only one core can do any work -
+the others will just sit around waiting on the next result.
+
+With all of that said, let's make our R code run in parallel.
+
+## Parallelization using `plyr` and `doParallel`
+
+So far, I've carefully avoided any mention of the `plyr` package.
+`plyr` is the predecessor to both `dplyr` and `purrr` 
+(and is also written by Hadley Wickham) and is no longer actively developed.
+In many cases, `plyr` functions are slower than their `tidyverse` equivalents.
+However, one key advantage of `plyr` is that it's dead-easy to parallelize and
+uses a much faster default parallel backend for small problem sets.
+It also provides a nice example of shared memory parallelization vs. 
+the distributed memory parallelization that we will encounter next.
+
+Let's explore how to write parallel code using `plyr`.
+The first step is to load the `plyr` and `doParallel` packages,
+determine the number of cores we will use.
+
+{{<admonition title="Threads vs. cores" type="note">}}
+There is often a lot of confusion between CPU threads and cores.
+A CPU core is the actual computation unit.
+Threads are a way of multi-tasking, and allow multiple simultaneous tasks to
+share the same CPU core.
+Multiple threads do not substitute for multiple cores.
+Because of this, compute-intensive workloads (like R) are typically only focused
+on the number of CPU cores available, not threads.
+{{</admonition>}}
+
+The `doParallel` package provides a handy way of looking up the number of cores
+if we don't have prior knowledge of the values.
+
+```{r}
+library(plyr)
+library(doParallel)
+
+cores <- detectCores()
+cores
+```
+
+Once we have the number of cores,
+we can regster `doParallel` as our parallel backend.
+
+```{r}
+registerDoParallel(cores=cores)
+```
+
+This creates what's known as a "fork cluster". 
+A fork cluster is a special type of cluster where a UNIX OS "forks",
+or splits the parent process to run on mulitple cores.
+The forked processes share the same memory and are more or less identical to the parent.
+Because the processes share the same memory, there is no need to "set them up"
+by loading packages or transferring variables.
+
+Anyhow all we need to do to parallelize our code now is call the corresponding
+`plyr` function.
+In this case, we are using `llply()`, 
+which is more or less a direct copy of `purrr`'s `map()`.
+The syntax is identical.
+To run in parallel, the only special change we need to do is add 
+`.parallel=TRUE` as an argument to `llply()`
+We'll use a fake function that does nothing but return its argument after sleeping for a bit.
+
+```{r}
+fake_func <- function(x) {
+  Sys.sleep(0.1)
+  return(x)
+}
+
+library(microbenchmark)
+microbenchmark(
+  serial = llply(1:24, fake_func),
+  parallel = llply(1:24, fake_func, .parallel = TRUE),
+  times = 1
+)
+```
+
+That's it. 
+The recipe for parallel code using `plyr` is short and sweet (just 4 lines!!!!!).
+It can't get any easier than this.
+
+```{r eval=FALSE}
+library(plyr)
+library(doParallel)
+registerDoParallel(cores=detectCores())
+
+result <- llply(object_to_iterate_over, some_func, .parallel=TRUE)
+```
+
+This method of parallelization is perfect for when you just want to do
+something in parallel "quick and dirty".
+It requires zero effort, but keep in mind several things:
+
+* There is a small amount of overhead involved in shuffling off data to different cores,
+  Though this will be negligible if each iteration you are parallelizing is relatively large/slow,
+  large numbers of extremely fast operations will be very inefficient.
+
+* Savvy readers might have noticed the keyword "UNIX" earlier - 
+  only Mac, Linux, and other UNIX variants have the ability to fork processes.
+  This method of parallelization simply cannot be done on Windows.
+  
+* You cannot spread this type of workload over multiple computers.
+
+## Parallelization using `multidplyr`
+
+`multidplyr` is the tidyverse parallel backend. 
+Unlike the `plyr`/`doParallel` method we just covered,
+`multidplyr` creates a PSOCK cluster by default
+("PSOCK" stands for parallel socket cluster).
+Essentially, this workflow has 5 steps:
+
+* Launch our cluster R worker processes (each uses 1 core).
+
+* Load packages and send data to the workers.
+
+* Our workers execute our workflow in parallel.
+
+* Collect results from the workers.
+
+* Shut down the cluster
+  (otherwise the workers hang around and continue to eat up resources).
+  
+`multidplyr` abstracts away several of these steps for us, simplifying our workflow.
+Let's explore this using an example calculation on our favorite `nycflights13` dataset.
+
+Note that `multidplyr` is not available through CRAN, 
+we'll have to fetch it from Github with the `devtools` package.
+Windows users may need to install [RTools](https://cran.r-project.org/bin/windows/Rtools/) 
+beforehand to allow installation from source code.
+
+```{r eval=FALSE}
+install.packages("devtools")
+devtools::install_github("hadley/multidplyr")
+```
+
+
+```{r}
+library(tidyverse)
+library(multidplyr)
+library(nycflights13)
+
+results <- flights %>% 
+  partition(dest) %>% 
+  summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %>% 
+  collect() %>% 
+  arrange(est_travel_time)
+```
+
+Examining the workflow, we first partition our data across our workers 
+(in this case R decided that we only needed 7 for whatever reason).
+The `partition()` function creates a `party_df`, 
+a dataframe that has been partitioned into 7 shards partitioned across our 7 worker processes.
+`partition()` serves more or less the same function as `group_by()`, 
+and ensures that all observations for a particular group are assigned to the same worker.
+`collect()` then collects the data from the parallel workers, after which they shut down.
+
+```{r}
+flights %>% partition(dest)
+```
+
+Let's compare that example with non-parallel execution speed.
+
+```{r messages=FALSE}
+microbenchmark(
+  parallel = {
+    results <- flights %>% 
+      partition(dest) %>% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %>% 
+      collect() %>% 
+      arrange(est_travel_time)
+  },
+  serial = {
+    results <- flights %>% 
+      group_by(dest) %>% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %>% 
+      arrange(est_travel_time)
+  },
+  times = 5
+)
+```
+What happened? Our code was actually slower. 
+Short answer, there's a lot of overhead associated with setting up our parallel
+workers, moving the data around, and then shutting them down again. 
+When we parallelized `plyr` earlier, 
+we cheated a bit using `Sys.sleep()`.
+Let's do so again here (just for the purposes of demonstration).
+
+```{r}
+microbenchmark(
+  parallel = {
+    results <- flights %>% 
+      partition(dest) %>% 
+      summarize(est_travel_time=(function(x) {
+        Sys.sleep(0.1)
+        return(mean(x, na.rm=TRUE))
+      })(air_time)) %>% 
+      collect() %>% 
+      arrange(est_travel_time)
+  },
+  serial = {
+    results <- flights %>% 
+      group_by(dest) %>% 
+      summarize(est_travel_time=(function(x) {
+        Sys.sleep(0.1)
+        return(mean(x, na.rm=TRUE))
+      })(air_time)) %>% 
+      arrange(est_travel_time)
+  },
+  times = 5
+)
+```
+
+
+
+## Other parallelization methods
+
+### Microsoft R Open
+
+There are a number of alternative R implementations.
+One of them, [Microsoft R Open](https://mran.microsoft.com/open/) 
+(formerly Revolution R), is a relatively vanilla alternative 
+R implementation compiled against Intel's MKL libraries
+(unlike some implmentations like [Renjin](http://www.renjin.org/), 
+it does not completely rewrite the language).
+Intel's MKL is generally faster than its open-source GNU R equivalent, 
+and Microsoft R will perform many types of operations in parallel by default.
+Microsoft R is free and I've never really noticed any issues with it relative 
+to the GNU version.
+Installing this is a performance "freebie" in many cases, 
+just install it and you're done.
+
+### Apache Spark
+
+If you want to parallelize your R jobs across a cluster, 
+you likely will want to use Spark.
+(The alternative to using Spark would be to write code using something like Rmpi,
+but at that point you're better off just switching langages to C++ or Fortran.)
+Spark is a distributed compute engine that runs analyses in parallel across
+multiple nodes.
+It can be a bit complex to get started with, and is outside the scope of this tutorial.
+However, if you are looking to get started with Spark, 
+I recommend checking out RStudio's [sparklyr](http://spark.rstudio.com/) package.
+
+### Serial farming across a batch computing cluster
+
+The traditional HPC cluster manages workloads using a batch scheduler like SLURM.
+Essentially, users submit non-interactive batch job scripts to the scheduler,
+which decides where a user's jobs get run.
+The cluster filesystem is shared across all nodes.
+Our workflow here would normally take one of two forms: "manually", 
+where we write chunks of our dataset to disk and then write a separate R job to
+analyze each chunk, 
+or using some external automation tool like [Snakemake](http://snakemake.readthedocs.io/en/stable/) or the 
+[batchjobs](https://github.com/tudo-r/BatchJobs).

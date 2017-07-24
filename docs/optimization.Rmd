@@ -1,5 +1,5 @@
 ---
-title: "Performance optimizations"
+title: "Performance optimization"
 draft: true
 menu: main
 weight: 9
@@ -280,6 +280,17 @@ but when working with a matrix of millions (or billions) of elements,
 the performance hit can be massive.
 The `map` functions from `purrr` are a useful tool here, 
 because they will throw an error if an unwanted type tries to sneak in and convert our dataset.
+
+## Calling code from other languages
+
+Throughout this tutorial, we've mentioned that other languages like C++ and Fortran
+are much faster than R.
+It is possible to write functions in these other languages that we can then use in R,
+resulting in a massive speedup over their R equivalents.
+Doing this won't be covered here 
+(this tutorial is intended as a "pure R" lesson that does not require prerequisite knowledge),
+but you can see an excellent overview of doing so in Hadley Wickham's
+[Advanced R](http://adv-r.had.co.nz/Rcpp.html) book.
 
 ## [Next section](../parallel/)
 

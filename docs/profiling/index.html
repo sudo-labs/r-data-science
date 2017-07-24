@@ -7,7 +7,7 @@
 	<meta name="description" content="Making your R code just a little bit faster...">
 	<meta name="generator" content="Hugo 0.25.1" />
 	
-	<title>Profiling &mdash; HPC R</title>
+	<title>Measuring code speed &mdash; HPC R</title>
 	
 	<link rel="stylesheet" href="/hpc-r/css/alabaster.css" type="text/css" />
 	<link rel="stylesheet" href="/hpc-r/css/highlight.css" type="text/css" />
@@ -23,7 +23,7 @@
 				<div class="bodywrapper">
 					<div class="body" role="main">
 						
-	<h1>Profiling</h1>
+	<h1>Measuring code speed</h1>
 	
 	<div id="comparing-code-speed" class="section level2">
 <h2>Comparing code speed</h2>
@@ -41,9 +41,9 @@ microbenchmark(
                10 ^ 0.5
                )</code></pre>
 <pre><code>## Unit: nanoseconds
-##      expr min    lq   mean median    uq  max neval
-##  sqrt(10) 106 112.0 138.76    116 128.0 1619   100
-##    10^0.5 252 260.5 322.61    268 275.5 4958   100</code></pre>
+##      expr min  lq   mean median    uq  max neval
+##  sqrt(10) 108 119 153.60    129 148.0 1901   100
+##    10^0.5 232 245 331.58    252 267.5 6078   100</code></pre>
 <p>In this case, the <code>sqrt()</code> function was quite a bit faster, likely because of some optimization specific to doing a square root (as opposed to exponentiation operations in general). Now we can measure how fast two pieces of code are.</p>
 <div class="admonition note">
 <p class="first admonition-title">The R compiler</p>
@@ -118,11 +118,15 @@ microbenchmark(
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/profiling/">Profiling</a>
+		<a class="reference internal" href="/hpc-r/profiling/">Measuring code speed</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/optimization/">Performance optimizations</a>
+		<a class="reference internal" href="/hpc-r/optimization/">Performance optimization</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-r/parallel/">Running code in parallel</a>
 	</li>
 	
 </ul>

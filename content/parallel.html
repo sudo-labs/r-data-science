@@ -1,9 +1,219 @@
 ---
-title: "Parallel"
-date: 2017-07-24T13:32:20-04:00
+title: "Running code in parallel"
 draft: true
+menu: main
+weight: 10
 ---
 
 
 
+<p>Like the majority of programming languages, R runs on one CPU core by default. All modern CPUs have multiple cores. This means that there is typically spare computing power that goes unused when we run R. Using our other CPUs is often a very cheap way of making our code run faster. However, it is not the be all end all of getting better performance.</p>
+<p>In most cases, the number of CPUs on a system is rather limited. The maximum theoretical speedup from running in parallel is equal to the number of cores you have available. Furthermore, not all code can be parallelized, and scaling is not always linear. If only 20 percent of your code can be run in parallel, the maximum speedup from parallelization (even with an infinite number of cores), would be just 20 percent. The performance gains in the last section were considerably more than that. Because of this, you should only pursue parallelization if you’ve already done all you can to optimize your code. Better code beats more hardware every time (it’s also significantly less expensive).</p>
+<p>One final consideration is that we can only parallelize code where each subset of a problem is completely independent from other subsets. If each result depends on the last, only one core can do any work - the others will just sit around waiting on the next result.</p>
+<p>With all of that said, let’s make our R code run in parallel.</p>
+<div id="parallelization-using-plyr-and-doparallel" class="section level2">
+<h2>Parallelization using <code>plyr</code> and <code>doParallel</code></h2>
+<p>So far, I’ve carefully avoided any mention of the <code>plyr</code> package. <code>plyr</code> is the predecessor to both <code>dplyr</code> and <code>purrr</code> (and is also written by Hadley Wickham) and is no longer actively developed. In many cases, <code>plyr</code> functions are slower than their <code>tidyverse</code> equivalents. However, one key advantage of <code>plyr</code> is that it’s dead-easy to parallelize and uses a much faster default parallel backend for small problem sets. It also provides a nice example of shared memory parallelization vs. the distributed memory parallelization that we will encounter next.</p>
+<p>Let’s explore how to write parallel code using <code>plyr</code>. The first step is to load the <code>plyr</code> and <code>doParallel</code> packages, determine the number of cores we will use.</p>
+<p>{{<admonition title="Threads vs. cores" type="note">}} There is often a lot of confusion between CPU threads and cores. A CPU core is the actual computation unit. Threads are a way of multi-tasking, and allow multiple simultaneous tasks to share the same CPU core. Multiple threads do not substitute for multiple cores. Because of this, compute-intensive workloads (like R) are typically only focused on the number of CPU cores available, not threads. {{</admonition>}}</p>
+<p>The <code>doParallel</code> package provides a handy way of looking up the number of cores if we don’t have prior knowledge of the values.</p>
+<pre class="r"><code>library(plyr)
+library(doParallel)</code></pre>
+<pre><code>## Loading required package: foreach</code></pre>
+<pre><code>## Loading required package: iterators</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre class="r"><code>cores &lt;- detectCores()
+cores</code></pre>
+<pre><code>## [1] 8</code></pre>
+<p>Once we have the number of cores, we can regster <code>doParallel</code> as our parallel backend.</p>
+<pre class="r"><code>registerDoParallel(cores=cores)</code></pre>
+<p>This creates what’s known as a “fork cluster”. A fork cluster is a special type of cluster where a UNIX OS “forks”, or splits the parent process to run on mulitple cores. The forked processes share the same memory and are more or less identical to the parent. Because the processes share the same memory, there is no need to “set them up” by loading packages or transferring variables.</p>
+<p>Anyhow all we need to do to parallelize our code now is call the corresponding <code>plyr</code> function. In this case, we are using <code>llply()</code>, which is more or less a direct copy of <code>purrr</code>’s <code>map()</code>. The syntax is identical. To run in parallel, the only special change we need to do is add <code>.parallel=TRUE</code> as an argument to <code>llply()</code> We’ll use a fake function that does nothing but return its argument after sleeping for a bit.</p>
+<pre class="r"><code>fake_func &lt;- function(x) {
+  Sys.sleep(0.1)
+  return(x)
+}
 
+library(microbenchmark)
+microbenchmark(
+  serial = llply(1:24, fake_func),
+  parallel = llply(1:24, fake_func, .parallel = TRUE),
+  times = 1
+)</code></pre>
+<pre><code>## Unit: milliseconds
+##      expr       min        lq      mean    median        uq       max
+##    serial 2444.0487 2444.0487 2444.0487 2444.0487 2444.0487 2444.0487
+##  parallel  475.1759  475.1759  475.1759  475.1759  475.1759  475.1759
+##  neval
+##      1
+##      1</code></pre>
+<p>That’s it. The recipe for parallel code using <code>plyr</code> is short and sweet (just 4 lines!!!!!). It can’t get any easier than this.</p>
+<pre class="r"><code>library(plyr)
+library(doParallel)
+registerDoParallel(cores=detectCores())
+
+result &lt;- llply(object_to_iterate_over, some_func, .parallel=TRUE)</code></pre>
+<p>This method of parallelization is perfect for when you just want to do something in parallel “quick and dirty”. It requires zero effort, but keep in mind several things:</p>
+<ul>
+<li><p>There is a small amount of overhead involved in shuffling off data to different cores, Though this will be negligible if each iteration you are parallelizing is relatively large/slow, large numbers of extremely fast operations will be very inefficient.</p></li>
+<li><p>Savvy readers might have noticed the keyword “UNIX” earlier - only Mac, Linux, and other UNIX variants have the ability to fork processes. This method of parallelization simply cannot be done on Windows.</p></li>
+<li><p>You cannot spread this type of workload over multiple computers.</p></li>
+</ul>
+</div>
+<div id="parallelization-using-multidplyr" class="section level2">
+<h2>Parallelization using <code>multidplyr</code></h2>
+<p><code>multidplyr</code> is the tidyverse parallel backend. Unlike the <code>plyr</code>/<code>doParallel</code> method we just covered, <code>multidplyr</code> creates a PSOCK cluster by default (“PSOCK” stands for parallel socket cluster). Essentially, this workflow has 5 steps:</p>
+<ul>
+<li><p>Launch our cluster R worker processes (each uses 1 core).</p></li>
+<li><p>Load packages and send data to the workers.</p></li>
+<li><p>Our workers execute our workflow in parallel.</p></li>
+<li><p>Collect results from the workers.</p></li>
+<li><p>Shut down the cluster (otherwise the workers hang around and continue to eat up resources).</p></li>
+</ul>
+<p><code>multidplyr</code> abstracts away several of these steps for us, simplifying our workflow. Let’s explore this using an example calculation on our favorite <code>nycflights13</code> dataset.</p>
+<p>Note that <code>multidplyr</code> is not available through CRAN, we’ll have to fetch it from Github with the <code>devtools</code> package. Windows users may need to install <a href="https://cran.r-project.org/bin/windows/Rtools/">RTools</a> beforehand to allow installation from source code.</p>
+<pre class="r"><code>install.packages(&quot;devtools&quot;)
+devtools::install_github(&quot;hadley/multidplyr&quot;)</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## accumulate(): purrr, foreach
+## arrange():    dplyr, plyr
+## compact():    purrr, plyr
+## count():      dplyr, plyr
+## failwith():   dplyr, plyr
+## filter():     dplyr, stats
+## id():         dplyr, plyr
+## lag():        dplyr, stats
+## mutate():     dplyr, plyr
+## rename():     dplyr, plyr
+## summarise():  dplyr, plyr
+## summarize():  dplyr, plyr
+## when():       purrr, foreach</code></pre>
+<pre class="r"><code>library(multidplyr)
+library(nycflights13)
+
+results &lt;- flights %&gt;% 
+  partition(dest) %&gt;% 
+  summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %&gt;% 
+  collect() %&gt;% 
+  arrange(est_travel_time)</code></pre>
+<pre><code>## Initialising 7 core cluster.</code></pre>
+<pre><code>## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
+<p>Examining the workflow, we first partition our data across our workers (in this case R decided that we only needed 7 for whatever reason). The <code>partition()</code> function creates a <code>party_df</code>, a dataframe that has been partitioned into 7 shards partitioned across our 7 worker processes. <code>partition()</code> serves more or less the same function as <code>group_by()</code>, and ensures that all observations for a particular group are assigned to the same worker. <code>collect()</code> then collects the data from the parallel workers, after which they shut down.</p>
+<pre class="r"><code>flights %&gt;% partition(dest)</code></pre>
+<pre><code>## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
+<pre><code>## Source: party_df [336,776 x 19]
+## Groups: dest
+## Shards: 7 [38,154--54,316 rows]
+## 
+## # S3: party_df
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      558            600        -2      849
+##  2  2013     1     1      559            559         0      702
+##  3  2013     1     1      601            600         1      844
+##  4  2013     1     1      629            630        -1      824
+##  5  2013     1     1      639            640        -1      739
+##  6  2013     1     1      643            646        -3      922
+##  7  2013     1     1      643            645        -2      837
+##  8  2013     1     1      653            700        -7      936
+##  9  2013     1     1      723            725        -2     1013
+## 10  2013     1     1      752            759        -7      955
+## # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+<p>Let’s compare that example with non-parallel execution speed.</p>
+<pre class="r"><code>microbenchmark(
+  parallel = {
+    results &lt;- flights %&gt;% 
+      partition(dest) %&gt;% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %&gt;% 
+      collect() %&gt;% 
+      arrange(est_travel_time)
+  },
+  serial = {
+    results &lt;- flights %&gt;% 
+      group_by(dest) %&gt;% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %&gt;% 
+      arrange(est_travel_time)
+  },
+  times = 5
+)</code></pre>
+<pre><code>## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
+<pre><code>## Unit: milliseconds
+##      expr        min         lq       mean    median         uq        max
+##  parallel 1055.13747 1111.81610 1159.13770 1145.2056 1188.96220 1294.56712
+##    serial   39.26432   39.38337   40.92256   41.7487   41.86486   42.35157
+##  neval
+##      5
+##      5</code></pre>
+<p>What happened? Our code was actually slower. Short answer, there’s a lot of overhead associated with setting up our parallel workers, moving the data around, and then shutting them down again. When we parallelized <code>plyr</code> earlier, we cheated a bit using <code>Sys.sleep()</code>. Let’s do so again here (just for the purposes of demonstration).</p>
+<pre class="r"><code>microbenchmark(
+  parallel = {
+    results &lt;- flights %&gt;% 
+      partition(dest) %&gt;% 
+      summarize(est_travel_time=(function(x) {
+        Sys.sleep(0.1)
+        return(mean(x, na.rm=TRUE))
+      })(air_time)) %&gt;% 
+      collect() %&gt;% 
+      arrange(est_travel_time)
+  },
+  serial = {
+    results &lt;- flights %&gt;% 
+      group_by(dest) %&gt;% 
+      summarize(est_travel_time=(function(x) {
+        Sys.sleep(0.1)
+        return(mean(x, na.rm=TRUE))
+      })(air_time)) %&gt;% 
+      arrange(est_travel_time)
+  },
+  times = 5
+)</code></pre>
+<pre><code>## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments
+
+## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
+<pre><code>## Unit: seconds
+##      expr       min        lq      mean    median        uq       max
+##  parallel  3.070534  3.310241  3.643623  3.418394  4.105774  4.313174
+##    serial 10.593745 10.594702 10.615766 10.594943 10.605036 10.690403
+##  neval
+##      5
+##      5</code></pre>
+</div>
+<div id="other-parallelization-methods" class="section level2">
+<h2>Other parallelization methods</h2>
+<div id="microsoft-r-open" class="section level3">
+<h3>Microsoft R Open</h3>
+<p>There are a number of alternative R implementations. One of them, <a href="https://mran.microsoft.com/open/">Microsoft R Open</a> (formerly Revolution R), is a relatively vanilla alternative R implementation compiled against Intel’s MKL libraries (unlike some implmentations like <a href="http://www.renjin.org/">Renjin</a>, it does not completely rewrite the language). Intel’s MKL is generally faster than its open-source GNU R equivalent, and Microsoft R will perform many types of operations in parallel by default. Microsoft R is free and I’ve never really noticed any issues with it relative to the GNU version. Installing this is a performance “freebie” in many cases, just install it and you’re done.</p>
+</div>
+<div id="apache-spark" class="section level3">
+<h3>Apache Spark</h3>
+<p>If you want to parallelize your R jobs across a cluster, you likely will want to use Spark. (The alternative to using Spark would be to write code using something like Rmpi, but at that point you’re better off just switching langages to C++ or Fortran.) Spark is a distributed compute engine that runs analyses in parallel across multiple nodes. It can be a bit complex to get started with, and is outside the scope of this tutorial. However, if you are looking to get started with Spark, I recommend checking out RStudio’s <a href="http://spark.rstudio.com/">sparklyr</a> package.</p>
+</div>
+<div id="serial-farming-across-a-batch-computing-cluster" class="section level3">
+<h3>Serial farming across a batch computing cluster</h3>
+<p>The traditional HPC cluster manages workloads using a batch scheduler like SLURM. Essentially, users submit non-interactive batch job scripts to the scheduler, which decides where a user’s jobs get run. The cluster filesystem is shared across all nodes. Our workflow here would normally take one of two forms: “manually”, where we write chunks of our dataset to disk and then write a separate R job to analyze each chunk, or using some external automation tool like <a href="http://snakemake.readthedocs.io/en/stable/">Snakemake</a> or the <a href="https://github.com/tudo-r/BatchJobs">batchjobs</a>.</p>
+</div>
+</div>

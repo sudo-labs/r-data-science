@@ -1,5 +1,5 @@
 ---
-title: "Profiling"
+title: "Measuring code speed"
 draft: true
 menu: main
 weight: 8
@@ -23,9 +23,9 @@ microbenchmark(
                10 ^ 0.5
                )</code></pre>
 <pre><code>## Unit: nanoseconds
-##      expr min    lq   mean median    uq  max neval
-##  sqrt(10) 106 112.0 138.76    116 128.0 1619   100
-##    10^0.5 252 260.5 322.61    268 275.5 4958   100</code></pre>
+##      expr min  lq   mean median    uq  max neval
+##  sqrt(10) 108 119 153.60    129 148.0 1901   100
+##    10^0.5 232 245 331.58    252 267.5 6078   100</code></pre>
 <p>In this case, the <code>sqrt()</code> function was quite a bit faster, likely because of some optimization specific to doing a square root (as opposed to exponentiation operations in general). Now we can measure how fast two pieces of code are.</p>
 <p>{{<admonition title="The R compiler" type="note">}} R has a JIT (just in time) compiler that is enabled by default. You don’t need to worry about compiling your code with the <code>compiler::cmpfun()</code> function, because it is already done for you automatically! {{</admonition>}}</p>
 </div>
