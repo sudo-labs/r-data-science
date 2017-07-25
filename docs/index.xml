@@ -89,8 +89,7 @@ name &amp;lt;- function(reqd_arg, optional_arg=42) { # do stuff return(result) }
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/hpc-r/profiling/</guid>
-      <description>Comparing code speed The base R language is very, very slow. However, a lot of the packages and functions in R have been written in C/C++/Fortran and are very, very fast. So depending on what functions we use to do things, we can get significantly faster performance. Of course, this depends on us being able to measure how fast our code is in the first place.
-To measure how fast a bit of code is, we can benchmark it.</description>
+      <description>Comparing code speed The base R language is very, very slow. However, a lot of the packages and functions in R have been written in C/C++/Fortran and are very, very fast. So depending on what functions we use to do things, we can get significantly faster performance. Of course, this depends on us being able to measure how fast our code is in the first place.</description>
     </item>
     
     <item>

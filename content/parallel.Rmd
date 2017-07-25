@@ -496,9 +496,9 @@ where we write chunks of our dataset to disk and then write a separate R job to
 analyze each chunk, 
 and using an automation tool like
 [Snakemake](http://snakemake.readthedocs.io/en/stable/) or the 
-[batchjobs](https://github.com/tudo-r/BatchJobs).
+[batchjobs](https://github.com/tudo-r/BatchJobs) package.
 
-{{<admonition title="Exercise - Writing a command line R program"}}
+{{<admonition title="Exercise - Writing a command line R program">}}
 Typically, when running on the command line, 
 we want our R scripts to accept command line arguments 
 (like which data chunk to analyze).

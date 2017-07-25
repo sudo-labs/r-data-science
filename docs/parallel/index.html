@@ -33,7 +33,10 @@
 <h2>Parallelization using <code>plyr</code> and <code>doParallel</code></h2>
 <p>So far, I’ve carefully avoided any mention of the <code>plyr</code> package. <code>plyr</code> is the predecessor to both <code>dplyr</code> and <code>purrr</code> (and is also written by Hadley Wickham) and is no longer actively developed. In many cases, <code>plyr</code> functions are slower than their <code>tidyverse</code> equivalents. However, one key advantage of <code>plyr</code> is that it’s dead-easy to parallelize and uses a much faster default parallel backend for small problem sets. It also provides a nice example of shared memory parallelization vs. the distributed memory parallelization that we will encounter next.</p>
 <p>Let’s explore how to write parallel code using <code>plyr</code>. The first step is to load the <code>plyr</code> and <code>doParallel</code> packages, determine the number of cores we will use.</p>
-<p>{{<admonition title="Threads vs. cores" type="note">}} There is often a lot of confusion between CPU threads and cores. A CPU core is the actual computation unit. Threads are a way of multi-tasking, and allow multiple simultaneous tasks to share the same CPU core. Multiple threads do not substitute for multiple cores. Because of this, compute-intensive workloads (like R) are typically only focused on the number of CPU cores available, not threads. {{</admonition>}}</p>
+<div class="admonition note">
+<p class="first admonition-title">Threads vs. cores</p>
+<p>There is often a lot of confusion between CPU threads and cores. A CPU core is the actual computation unit. Threads are a way of multi-tasking, and allow multiple simultaneous tasks to share the same CPU core. Multiple threads do not substitute for multiple cores. Because of this, compute-intensive workloads (like R) are typically only focused on the number of CPU cores available, not threads.</p>
+</div>
 <p>The <code>doParallel</code> package provides a handy way of looking up the number of cores if we don’t have prior knowledge of the values.</p>
 <pre class="r"><code>library(plyr)
 library(doParallel)</code></pre>
@@ -60,8 +63,8 @@ microbenchmark(
 )</code></pre>
 <pre><code>## Unit: milliseconds
 ##      expr       min        lq      mean    median        uq       max
-##    serial 2406.2754 2406.2754 2406.2754 2406.2754 2406.2754 2406.2754
-##  parallel  517.9811  517.9811  517.9811  517.9811  517.9811  517.9811
+##    serial 2442.9770 2442.9770 2442.9770 2442.9770 2442.9770 2442.9770
+##  parallel  473.8413  473.8413  473.8413  473.8413  473.8413  473.8413
 ##  neval
 ##      1
 ##      1</code></pre>
@@ -128,21 +131,21 @@ results &lt;- flights %&gt;%
 <pre><code>## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
 <pre><code>## Source: party_df [336,776 x 19]
 ## Groups: dest
-## Shards: 7 [37,840--62,521 rows]
+## Shards: 7 [37,722--63,072 rows]
 ## 
 ## # S3: party_df
 ##     year month   day dep_time sched_dep_time dep_delay arr_time
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-##  1  2013     1     1      558            600        -2      853
-##  2  2013     1     1      559            600        -1      941
-##  3  2013     1     1      602            605        -3      821
-##  4  2013     1     1      629            630        -1      721
-##  5  2013     1     1      635            635         0     1028
-##  6  2013     1     1      646            645         1      910
-##  7  2013     1     1      656            700        -4      948
-##  8  2013     1     1      659            705        -6      907
-##  9  2013     1     1      724            730        -6     1111
-## 10  2013     1     1      725            730        -5     1052
+##  1  2013     1     1      559            600        -1      854
+##  2  2013     1     1      602            610        -8      812
+##  3  2013     1     1      624            630        -6      909
+##  4  2013     1     1      624            630        -6      840
+##  5  2013     1     1      629            630        -1      824
+##  6  2013     1     1      643            645        -2      837
+##  7  2013     1     1      646            645         1     1023
+##  8  2013     1     1      651            655        -4      936
+##  9  2013     1     1      743            749        -6     1043
+## 10  2013     1     1      752            759        -7      955
 ## # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
 ## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
 ## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
@@ -174,9 +177,9 @@ results &lt;- flights %&gt;%
 
 ## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
 <pre><code>## Unit: milliseconds
-##      expr        min         lq       mean    median         uq       max
-##  parallel 1017.34131 1047.49634 1088.25887 1063.6087 1116.88177 1195.9663
-##    serial   39.74067   41.80142   61.08372   42.7728   43.42124  137.6825
+##      expr       min         lq       mean     median         uq        max
+##  parallel 1082.4636 1121.14473 1157.19110 1170.60528 1197.55161 1214.19028
+##    serial   38.6268   39.69088   41.31497   42.55553   42.59156   43.11009
 ##  neval
 ##      5
 ##      5</code></pre>
@@ -214,8 +217,8 @@ results &lt;- flights %&gt;%
 ## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
 <pre><code>## Unit: seconds
 ##      expr       min        lq      mean    median        uq       max
-##  parallel  3.013832  3.285617  3.315418  3.296124  3.364581  3.616937
-##    serial 10.592079 10.594629 10.614091 10.595467 10.597639 10.690643
+##  parallel  2.951026  3.087707  3.232776  3.273678  3.387101  3.464368
+##    serial 10.591109 10.593191 10.614384 10.596090 10.601251 10.690277
 ##  neval
 ##      5
 ##      5</code></pre>
@@ -381,16 +384,16 @@ microbenchmark(
   times = 10
 )</code></pre>
 <pre><code>## Unit: microseconds
-##          expr         min          lq        mean       median          uq
-##    vectorized     828.928     835.395    1222.222     900.9915    1010.062
-##  purrr_serial   73294.095   76356.237   77538.150   77638.3970   79293.146
-##   plyr_serial   70992.463   75498.399   76703.794   77955.6490   78526.015
-##     plyr_fork 1017845.725 1034561.177 1065308.324 1057045.3445 1087653.916
+##          expr        min         lq         mean       median          uq
+##    vectorized    842.563     942.03     975.9827     999.2185    1037.247
+##  purrr_serial  70792.919   73406.89   75517.8496   75072.9480   77712.982
+##   plyr_serial  69881.959   70814.89   72361.8620   72102.9315   74025.266
+##     plyr_fork 993463.434 1018008.97 1055831.6332 1035352.6420 1062911.312
 ##          max neval
-##     4045.573    10
-##    80301.240    10
-##    80300.049    10
-##  1134339.878    10</code></pre>
+##     1053.202    10
+##    82178.797    10
+##    75607.017    10
+##  1191334.835    10</code></pre>
 <p>Again, vectorized code is very, very fast. The takeaway here is that we should avoid complexity wherever possible: stick to vectorized code, and only parallelize if you absolutely have to. One other instersting finding is that <code>plyr::llply()</code> is just as fast as <code>purrr::map()</code>. Though <code>purrr</code> <a href="https://github.com/tidyverse/purrr/issues/121">cannot be parallelized at the moment</a>, this means we can still use <code>plyr::llply()</code> in parallel (and <code>llply()</code> does not suffer from any related performance hit).</p>
 </div>
 <div id="other-parallelization-methods" class="section level2">
@@ -405,23 +408,14 @@ microbenchmark(
 </div>
 <div id="serial-farming-across-a-batch-computing-cluster" class="section level3">
 <h3>Serial farming across a batch computing cluster</h3>
-<p>The traditional HPC cluster manages workloads using a batch scheduler like SLURM. Essentially, users submit non-interactive batch job scripts to the scheduler, which decides where a user’s jobs get run. The cluster filesystem is shared across all nodes. Our workflow here would normally take one of two forms: “manually”, where we write chunks of our dataset to disk and then write a separate R job to analyze each chunk, and using an automation tool like <a href="http://snakemake.readthedocs.io/en/stable/">Snakemake</a> or the <a href="https://github.com/tudo-r/BatchJobs">batchjobs</a>.</p>
-<p>{{<admonition title="Exercise - Writing a command line R program"}}
-Typically, when running on the command line, 
-we want our R scripts to accept command line arguments 
-(like which data chunk to analyze).
-To do this, we use the `commandArgs()` function.
-
-
-```r
-args <- commandArgs(TRUE)
-```
-
-Write an R program that takes two numbers off of the command line and adds them
-together. You can run it with `Rscript yourScript.R arg1 arg2`.
-
-For more complex scenarios, I recommend looking into the `argparse` package.
-{{</admonition>}}</p>
+<p>The traditional HPC cluster manages workloads using a batch scheduler like SLURM. Essentially, users submit non-interactive batch job scripts to the scheduler, which decides where a user’s jobs get run. The cluster filesystem is shared across all nodes. Our workflow here would normally take one of two forms: “manually”, where we write chunks of our dataset to disk and then write a separate R job to analyze each chunk, and using an automation tool like <a href="http://snakemake.readthedocs.io/en/stable/">Snakemake</a> or the <a href="https://github.com/tudo-r/BatchJobs">batchjobs</a> package.</p>
+<div class="admonition ">
+<p class="first admonition-title">Exercise - Writing a command line R program</p>
+<p>Typically, when running on the command line, we want our R scripts to accept command line arguments (like which data chunk to analyze). To do this, we use the <code>commandArgs()</code> function.</p>
+<pre class="r"><code>args &lt;- commandArgs(TRUE)</code></pre>
+<p>Write an R program that takes two numbers off of the command line and adds them together. You can run it with <code>Rscript yourScript.R arg1 arg2</code>.</p>
+<p>For more complex scenarios, I recommend looking into the <code>argparse</code> package.</p>
+</div>
 </div>
 </div>
 <div id="back-to-frontpage" class="section level2">

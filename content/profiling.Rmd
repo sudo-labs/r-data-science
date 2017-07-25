@@ -63,7 +63,8 @@ It is used to identify the slow parts of our code so we can focus on fixing them
 
 We'll use the `profvis` package for this task.
 `profvis` executes a chunk of code (everything between the `{}`),
-and displays a nice interactive graph that shows where time was spent
+stopping it at regular interals to determine which functions are currently executing,
+then displays a nice interactive graph that shows where time was spent
 in each line of our code.
 It also steps into the functions that get called by our code - 
 there is no need to `profvis()` our function, 
@@ -71,7 +72,42 @@ then `profvis()` the code that it calls, etc., etc.
 
 ```{r}
 library(profvis)
+library(nycflights13)
+library(tidyverse)
+library(stringr)
 
+profvis({
+  # quick and dirty aggregation by plane and manufacturer
+  # not using pipes to break up the code a bit
+  planes_simple <- planes %>% 
+    mutate(model=str_replace(model, "-.*$", "")) %>% 
+    mutate(manufacturer=map_chr(str_split(manufacturer, " "), ~.x[[1]])) %>% 
+    group_by(model, manufacturer) %>% 
+    summarize(number = n()) %>% 
+    filter(number > 3)
+  
+  ggplot(planes_simple, aes(x=model, y=number, fill=manufacturer)) +
+    geom_bar(stat = "identity") +
+    theme_classic() + theme(axis.text.x = element_text(angle=45, hjust=1))
+}, interval = 0.001)
 ```
 
+In this case, everything run through the pipe appears as one giant line of code.
+This can make it very tricky to identify what's going on and when.
+In cases like this, 
+it's a good idea to break apart our pipe and have each as a separate expression.
+This lets us easily see how much time was spent in each line of code individual
+`dplyr` function.
 
+```{r}
+profvis({
+  planes_simple <- planes
+  planes_simple <- mutate(planes_simple, model=str_replace(model, "-.*$", ""))
+  planes_simple <- mutate(planes_simple, manufacturer=map_chr(str_split(manufacturer, " "), ~.x[[1]]))
+  planes_simple <- group_by(planes_simple, model, manufacturer)
+  planes_simple <- summarize(planes_simple, number = n())
+  planes_simple <- filter(planes_simple, number > 3)
+}, interval = 0.001)
+```
+
+## [Next section](../parallel/)
