@@ -181,6 +181,9 @@ a dataframe that has been partitioned into 7 shards partitioned across our 7 wor
 `partition()` serves more or less the same function as `group_by()`, 
 and ensures that all observations for a particular group are assigned to the same worker.
 `collect()` then collects the data from the parallel workers, after which they shut down.
+Finally, `arrange()` is something that cannot be done in parallel. 
+There's no point in sorting separate shards of data, 
+since they'll be out of order again when they are recombined.
 
 ```{r}
 flights %>% partition(dest)
@@ -206,6 +209,7 @@ microbenchmark(
   times = 5
 )
 ```
+
 What happened? Our code was actually slower. 
 Short answer, there's a lot of overhead associated with setting up our parallel
 workers, moving the data around, and then shutting them down again. 
@@ -238,7 +242,219 @@ microbenchmark(
 )
 ```
 
+Again, there is a limit to speed up (even while cheating), 
+because the `arrange()`, `collect()`, and `partition()` steps always take the 
+same amount of time to execute.
 
+Also, why didn't we just define an external function (lets call it `cheating()`) 
+instead of the `(function(col) {...})` monstrosity?
+
+```{r eval=FALSE}
+# what we should have done
+cheating <- function(col) {
+  Sys.sleep(0.1)
+  return(mean(col, na.rm=TRUE))
+}
+
+results <- flights %>% 
+  partition(dest) %>% 
+  summarize(est_travel_time=cheating(air_time)) %>% 
+  collect() %>% 
+  arrange(est_travel_time)
+```
+```
+Initialising 7 core cluster.
+group_indices_.grouped_df ignores extra arguments
+Error in checkForRemoteErrors(lapply(cl, recvResult)) : 7 nodes produced errors; 
+first error: Evaluation error: could not find function "cheating".
+```
+
+What happened? 
+Why doesn't our parallel cluster know about the `cheating()` function?
+As it turns out, our parallel workers are pretty much brand new copies of R
+with nothing loaded except for the data sent to them via `partition()`.
+We'll need to more or less manage our cluster manually to send them the data they need.
+
+There are several functions we'll use here:
+
+* `makePSOCKcluster()` - Creates our cluster. This is from the `parallel` package.
+* `set_default_cluster()` - Make the created cluster get used by `partition()` 
+  by default.
+* `cluster_library()` - Load an R package on every worker.
+* `cluster_assign_value()` - Exports variables to our cluster workers.
+* `stopCluster()` - Explicitly shuts down our cluster.
+
+A sample workflow using all of this might look like the following.
+
+```{r}
+# create a cluster and make it the default
+library(parallel)
+cluster <- makePSOCKcluster(detectCores())
+set_default_cluster(cluster)
+
+# define a function
+cheating <- function(col) {
+  Sys.sleep(0.1)
+  return(mean(col, na.rm=TRUE))
+}
+# pass it to workers
+cluster_assign_value(cluster, "cheating", cheating)
+# if we used a library in our parallel workers, we'd use something like the following here:
+#cluster_library(libraryName)
+
+# run our workflow
+flights %>% 
+  partition(dest) %>% 
+  summarize(est_travel_time=cheating(air_time)) %>% 
+  collect() %>% 
+  arrange(est_travel_time)
+
+# shut down our cluster at the end
+stopCluster(cluster)
+```
+
+That's a lot of extra work just to run in parallel, isn't it?
+One thing I noticed while reading through the 
+[multidplyr vignette](https://github.com/hadley/multidplyr/blob/master/vignettes/multidplyr.md)
+is that it says it can support running on "clusters created by the parallel package".
+This is good news, as one of those types of clusters is the "fork" cluster
+we used earlier with `plyr` (when parallelization was super easy...).
+
+Let's try this out:
+
+<!-- for some reason, this won't knit, but runs interactively -->
+```{r eval=FALSE}
+fork <- makeForkCluster(detectCores())
+set_default_cluster(fork)
+
+flights %>% 
+  partition(dest) %>% 
+  summarize(est_travel_time=cheating(air_time)) %>% 
+  collect() %>% 
+  arrange(est_travel_time)
+
+stopCluster(fork)
+```
+```
+# A tibble: 105 x 2
+    dest est_travel_time
+   <chr>           <dbl>
+ 1   BDL        25.46602
+ 2   ALB        31.78708
+ 3   PVD        32.66760
+ 4   PHL        33.17132
+ 5   MVY        36.31905
+ 6   BWI        38.49970
+ 7   MHT        38.50858
+ 8   BOS        38.95300
+ 9   ACK        42.06818
+10   SYR        43.03984
+# ... with 95 more rows
+```
+
+Great news, it worked. 
+We'll examine how the speed of each type of cluster compares with each other
+(no cheating this time!).
+We'll leave out the `arrange()` step, 
+as that doesn't add anything to our example aside from showing that certain things
+can't be parallelized.
+Since there are multiple clusters at work,
+we must explicitly specify which cluster we use when we run `partition()`.
+
+<!-- same issue as above -->
+```{r eval=FALSE}
+cluster_fork <- makeForkCluster(detectCores())
+cluster_psock <- makePSOCKcluster(detectCores())
+
+microbenchmark(
+  dplyr_serial = {
+    flights %>% 
+      group_by(dest) %>% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE))
+  },
+  dplyr_psock = {
+    flights %>% 
+      partition(dest, cluster=cluster_psock) %>% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %>% 
+      collect()
+  },
+  dplyr_fork = {
+    flights %>% 
+      partition(dest, cluster=cluster_fork) %>% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %>% 
+      collect()
+  },
+  plyr_serial = {
+    flights %>% 
+      # didn't cover ddply, but it's the plyr equivalent of dplyr 
+      # (.variables = group_by())
+      ddply(.variables = "dest",
+            .fun=function(x) mean(x$air_time, na.rm=TRUE))
+  },
+  plyr_fork = {
+    flights %>% 
+      ddply(.variables = "dest", 
+            .fun=function(x) mean(x$air_time, na.rm=TRUE), 
+            .parallel=TRUE)
+  }, 
+  times = 5
+)
+
+stopCluster(cluster_psock)
+stopCluster(cluster_fork)
+```
+```
+Unit: milliseconds
+         expr        min        lq       mean     median         uq       max neval
+ dplyr_serial   39.14037   39.6308   60.51139   39.91827   41.94427  141.9232     5
+  dplyr_psock 1007.31082 1301.6537 1393.16955 1366.20333 1409.68778 1880.9922     5
+   dplyr_fork  962.37095  985.1657 1005.70492 1013.73967 1022.19742 1045.0509     5
+  plyr_serial  370.86347  389.5137  397.98565  395.11678  416.63985  417.7944     5
+    plyr_fork  237.73061  248.6463  320.68526  336.84943  386.48719  393.7127     5
+```
+
+Takeaway message, the dplyr fork cluster is easier to use and slightly 
+faster than it's psock counterpart.
+Parallelization using `plyr` didn't see the same parallelization overhead as `dplyr`, 
+but was still almost 8 times slower than `dplyr` in serial mode.
+
+A good question is why does `dplyr` take so much longer than `plyr`'s fork cluster?
+If we look at the source code for `partition()`, 
+it always transmits all of the data to the forked workers
+(even though they start with all of the data already!).
+
+Heres a similar duel between vectorized code, `purrr` in serial, `plyr` in serial,
+and `plyr` in parallel.
+
+```{r}
+library(stringr)
+
+microbenchmark(
+  vectorized = str_detect(planes$model, "737"),
+  purrr_serial = {
+    planes$model %>% 
+      map(~str_detect(.x, "737"))
+  },
+  plyr_serial = {
+    planes$model %>% 
+      llply(.fun = function(x) str_detect(x, "737"))
+  },
+  plyr_fork = {
+    planes$model %>% 
+      llply(.fun = function(x) str_detect(x, "737"), .parallel=TRUE)
+  }, 
+  times = 10
+)
+```
+
+Again, vectorized code is very, very fast.
+The takeaway here is that we should avoid complexity wherever possible:
+stick to vectorized code, and only parallelize if you absolutely have to.
+One other instersting finding is that `plyr::llply()` is just as fast as 
+`purrr::map()`.
+Though `purrr` [cannot be parallelized at the moment](https://github.com/tidyverse/purrr/issues/121), 
+this means we can still use `plyr::llply()` in parallel 
+(and `llply()` does not suffer from any related performance hit).
 
 ## Other parallelization methods
 
@@ -278,5 +494,25 @@ The cluster filesystem is shared across all nodes.
 Our workflow here would normally take one of two forms: "manually", 
 where we write chunks of our dataset to disk and then write a separate R job to
 analyze each chunk, 
-or using some external automation tool like [Snakemake](http://snakemake.readthedocs.io/en/stable/) or the 
+and using an automation tool like
+[Snakemake](http://snakemake.readthedocs.io/en/stable/) or the 
 [batchjobs](https://github.com/tudo-r/BatchJobs).
+
+{{<admonition title="Exercise - Writing a command line R program"}}
+Typically, when running on the command line, 
+we want our R scripts to accept command line arguments 
+(like which data chunk to analyze).
+To do this, we use the `commandArgs()` function.
+
+```{r}
+args <- commandArgs(TRUE)
+```
+
+Write an R program that takes two numbers off of the command line and adds them
+together. You can run it with `Rscript yourScript.R arg1 arg2`.
+
+For more complex scenarios, I recommend looking into the `argparse` package.
+{{</admonition>}}
+
+## [Back to frontpage](../)
+

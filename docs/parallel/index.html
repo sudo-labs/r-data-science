@@ -33,10 +33,7 @@
 <h2>Parallelization using <code>plyr</code> and <code>doParallel</code></h2>
 <p>So far, I’ve carefully avoided any mention of the <code>plyr</code> package. <code>plyr</code> is the predecessor to both <code>dplyr</code> and <code>purrr</code> (and is also written by Hadley Wickham) and is no longer actively developed. In many cases, <code>plyr</code> functions are slower than their <code>tidyverse</code> equivalents. However, one key advantage of <code>plyr</code> is that it’s dead-easy to parallelize and uses a much faster default parallel backend for small problem sets. It also provides a nice example of shared memory parallelization vs. the distributed memory parallelization that we will encounter next.</p>
 <p>Let’s explore how to write parallel code using <code>plyr</code>. The first step is to load the <code>plyr</code> and <code>doParallel</code> packages, determine the number of cores we will use.</p>
-<div class="admonition note">
-<p class="first admonition-title">Threads vs. cores</p>
-<p>There is often a lot of confusion between CPU threads and cores. A CPU core is the actual computation unit. Threads are a way of multi-tasking, and allow multiple simultaneous tasks to share the same CPU core. Multiple threads do not substitute for multiple cores. Because of this, compute-intensive workloads (like R) are typically only focused on the number of CPU cores available, not threads.</p>
-</div>
+<p>{{<admonition title="Threads vs. cores" type="note">}} There is often a lot of confusion between CPU threads and cores. A CPU core is the actual computation unit. Threads are a way of multi-tasking, and allow multiple simultaneous tasks to share the same CPU core. Multiple threads do not substitute for multiple cores. Because of this, compute-intensive workloads (like R) are typically only focused on the number of CPU cores available, not threads. {{</admonition>}}</p>
 <p>The <code>doParallel</code> package provides a handy way of looking up the number of cores if we don’t have prior knowledge of the values.</p>
 <pre class="r"><code>library(plyr)
 library(doParallel)</code></pre>
@@ -63,8 +60,8 @@ microbenchmark(
 )</code></pre>
 <pre><code>## Unit: milliseconds
 ##      expr       min        lq      mean    median        uq       max
-##    serial 2444.0487 2444.0487 2444.0487 2444.0487 2444.0487 2444.0487
-##  parallel  475.1759  475.1759  475.1759  475.1759  475.1759  475.1759
+##    serial 2406.2754 2406.2754 2406.2754 2406.2754 2406.2754 2406.2754
+##  parallel  517.9811  517.9811  517.9811  517.9811  517.9811  517.9811
 ##  neval
 ##      1
 ##      1</code></pre>
@@ -126,26 +123,26 @@ results &lt;- flights %&gt;%
   arrange(est_travel_time)</code></pre>
 <pre><code>## Initialising 7 core cluster.</code></pre>
 <pre><code>## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
-<p>Examining the workflow, we first partition our data across our workers (in this case R decided that we only needed 7 for whatever reason). The <code>partition()</code> function creates a <code>party_df</code>, a dataframe that has been partitioned into 7 shards partitioned across our 7 worker processes. <code>partition()</code> serves more or less the same function as <code>group_by()</code>, and ensures that all observations for a particular group are assigned to the same worker. <code>collect()</code> then collects the data from the parallel workers, after which they shut down.</p>
+<p>Examining the workflow, we first partition our data across our workers (in this case R decided that we only needed 7 for whatever reason). The <code>partition()</code> function creates a <code>party_df</code>, a dataframe that has been partitioned into 7 shards partitioned across our 7 worker processes. <code>partition()</code> serves more or less the same function as <code>group_by()</code>, and ensures that all observations for a particular group are assigned to the same worker. <code>collect()</code> then collects the data from the parallel workers, after which they shut down. Finally, <code>arrange()</code> is something that cannot be done in parallel. There’s no point in sorting separate shards of data, since they’ll be out of order again when they are recombined.</p>
 <pre class="r"><code>flights %&gt;% partition(dest)</code></pre>
 <pre><code>## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
 <pre><code>## Source: party_df [336,776 x 19]
 ## Groups: dest
-## Shards: 7 [38,154--54,316 rows]
+## Shards: 7 [37,840--62,521 rows]
 ## 
 ## # S3: party_df
 ##     year month   day dep_time sched_dep_time dep_delay arr_time
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-##  1  2013     1     1      558            600        -2      849
-##  2  2013     1     1      559            559         0      702
-##  3  2013     1     1      601            600         1      844
-##  4  2013     1     1      629            630        -1      824
-##  5  2013     1     1      639            640        -1      739
-##  6  2013     1     1      643            646        -3      922
-##  7  2013     1     1      643            645        -2      837
-##  8  2013     1     1      653            700        -7      936
-##  9  2013     1     1      723            725        -2     1013
-## 10  2013     1     1      752            759        -7      955
+##  1  2013     1     1      558            600        -2      853
+##  2  2013     1     1      559            600        -1      941
+##  3  2013     1     1      602            605        -3      821
+##  4  2013     1     1      629            630        -1      721
+##  5  2013     1     1      635            635         0     1028
+##  6  2013     1     1      646            645         1      910
+##  7  2013     1     1      656            700        -4      948
+##  8  2013     1     1      659            705        -6      907
+##  9  2013     1     1      724            730        -6     1111
+## 10  2013     1     1      725            730        -5     1052
 ## # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
 ## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
 ## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
@@ -177,9 +174,9 @@ results &lt;- flights %&gt;%
 
 ## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
 <pre><code>## Unit: milliseconds
-##      expr        min         lq       mean    median         uq        max
-##  parallel 1055.13747 1111.81610 1159.13770 1145.2056 1188.96220 1294.56712
-##    serial   39.26432   39.38337   40.92256   41.7487   41.86486   42.35157
+##      expr        min         lq       mean    median         uq       max
+##  parallel 1017.34131 1047.49634 1088.25887 1063.6087 1116.88177 1195.9663
+##    serial   39.74067   41.80142   61.08372   42.7728   43.42124  137.6825
 ##  neval
 ##      5
 ##      5</code></pre>
@@ -217,11 +214,184 @@ results &lt;- flights %&gt;%
 ## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
 <pre><code>## Unit: seconds
 ##      expr       min        lq      mean    median        uq       max
-##  parallel  3.070534  3.310241  3.643623  3.418394  4.105774  4.313174
-##    serial 10.593745 10.594702 10.615766 10.594943 10.605036 10.690403
+##  parallel  3.013832  3.285617  3.315418  3.296124  3.364581  3.616937
+##    serial 10.592079 10.594629 10.614091 10.595467 10.597639 10.690643
 ##  neval
 ##      5
 ##      5</code></pre>
+<p>Again, there is a limit to speed up (even while cheating), because the <code>arrange()</code>, <code>collect()</code>, and <code>partition()</code> steps always take the same amount of time to execute.</p>
+<p>Also, why didn’t we just define an external function (lets call it <code>cheating()</code>) instead of the <code>(function(col) {...})</code> monstrosity?</p>
+<pre class="r"><code># what we should have done
+cheating &lt;- function(col) {
+  Sys.sleep(0.1)
+  return(mean(col, na.rm=TRUE))
+}
+
+results &lt;- flights %&gt;% 
+  partition(dest) %&gt;% 
+  summarize(est_travel_time=cheating(air_time)) %&gt;% 
+  collect() %&gt;% 
+  arrange(est_travel_time)</code></pre>
+<pre><code>Initialising 7 core cluster.
+group_indices_.grouped_df ignores extra arguments
+Error in checkForRemoteErrors(lapply(cl, recvResult)) : 7 nodes produced errors; 
+first error: Evaluation error: could not find function &quot;cheating&quot;.</code></pre>
+<p>What happened? Why doesn’t our parallel cluster know about the <code>cheating()</code> function? As it turns out, our parallel workers are pretty much brand new copies of R with nothing loaded except for the data sent to them via <code>partition()</code>. We’ll need to more or less manage our cluster manually to send them the data they need.</p>
+<p>There are several functions we’ll use here:</p>
+<ul>
+<li><code>makePSOCKcluster()</code> - Creates our cluster. This is from the <code>parallel</code> package.</li>
+<li><code>set_default_cluster()</code> - Make the created cluster get used by <code>partition()</code> by default.</li>
+<li><code>cluster_library()</code> - Load an R package on every worker.</li>
+<li><code>cluster_assign_value()</code> - Exports variables to our cluster workers.</li>
+<li><code>stopCluster()</code> - Explicitly shuts down our cluster.</li>
+</ul>
+<p>A sample workflow using all of this might look like the following.</p>
+<pre class="r"><code># create a cluster and make it the default
+library(parallel)
+cluster &lt;- makePSOCKcluster(detectCores())
+set_default_cluster(cluster)
+
+# define a function
+cheating &lt;- function(col) {
+  Sys.sleep(0.1)
+  return(mean(col, na.rm=TRUE))
+}
+# pass it to workers
+cluster_assign_value(cluster, &quot;cheating&quot;, cheating)
+# if we used a library in our parallel workers, we&#39;d use something like the following here:
+#cluster_library(libraryName)
+
+# run our workflow
+flights %&gt;% 
+  partition(dest) %&gt;% 
+  summarize(est_travel_time=cheating(air_time)) %&gt;% 
+  collect() %&gt;% 
+  arrange(est_travel_time)</code></pre>
+<pre><code>## Warning: group_indices_.grouped_df ignores extra arguments</code></pre>
+<pre><code>## # A tibble: 105 x 2
+##     dest est_travel_time
+##    &lt;chr&gt;           &lt;dbl&gt;
+##  1   BDL        25.46602
+##  2   ALB        31.78708
+##  3   PVD        32.66760
+##  4   PHL        33.17132
+##  5   MVY        36.31905
+##  6   BWI        38.49970
+##  7   MHT        38.50858
+##  8   BOS        38.95300
+##  9   ACK        42.06818
+## 10   SYR        43.03984
+## # ... with 95 more rows</code></pre>
+<pre class="r"><code># shut down our cluster at the end
+stopCluster(cluster)</code></pre>
+<p>That’s a lot of extra work just to run in parallel, isn’t it? One thing I noticed while reading through the <a href="https://github.com/hadley/multidplyr/blob/master/vignettes/multidplyr.md">multidplyr vignette</a> is that it says it can support running on “clusters created by the parallel package”. This is good news, as one of those types of clusters is the “fork” cluster we used earlier with <code>plyr</code> (when parallelization was super easy…).</p>
+<p>Let’s try this out:</p>
+<!-- for some reason, this won't knit, but runs interactively -->
+<pre class="r"><code>fork &lt;- makeForkCluster(detectCores())
+set_default_cluster(fork)
+
+flights %&gt;% 
+  partition(dest) %&gt;% 
+  summarize(est_travel_time=cheating(air_time)) %&gt;% 
+  collect() %&gt;% 
+  arrange(est_travel_time)
+
+stopCluster(fork)</code></pre>
+<pre><code># A tibble: 105 x 2
+    dest est_travel_time
+   &lt;chr&gt;           &lt;dbl&gt;
+ 1   BDL        25.46602
+ 2   ALB        31.78708
+ 3   PVD        32.66760
+ 4   PHL        33.17132
+ 5   MVY        36.31905
+ 6   BWI        38.49970
+ 7   MHT        38.50858
+ 8   BOS        38.95300
+ 9   ACK        42.06818
+10   SYR        43.03984
+# ... with 95 more rows</code></pre>
+<p>Great news, it worked. We’ll examine how the speed of each type of cluster compares with each other (no cheating this time!). We’ll leave out the <code>arrange()</code> step, as that doesn’t add anything to our example aside from showing that certain things can’t be parallelized. Since there are multiple clusters at work, we must explicitly specify which cluster we use when we run <code>partition()</code>.</p>
+<!-- same issue as above -->
+<pre class="r"><code>cluster_fork &lt;- makeForkCluster(detectCores())
+cluster_psock &lt;- makePSOCKcluster(detectCores())
+
+microbenchmark(
+  dplyr_serial = {
+    flights %&gt;% 
+      group_by(dest) %&gt;% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE))
+  },
+  dplyr_psock = {
+    flights %&gt;% 
+      partition(dest, cluster=cluster_psock) %&gt;% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %&gt;% 
+      collect()
+  },
+  dplyr_fork = {
+    flights %&gt;% 
+      partition(dest, cluster=cluster_fork) %&gt;% 
+      summarize(est_travel_time=mean(air_time, na.rm=TRUE)) %&gt;% 
+      collect()
+  },
+  plyr_serial = {
+    flights %&gt;% 
+      # didn&#39;t cover ddply, but it&#39;s the plyr equivalent of dplyr 
+      # (.variables = group_by())
+      ddply(.variables = &quot;dest&quot;,
+            .fun=function(x) mean(x$air_time, na.rm=TRUE))
+  },
+  plyr_fork = {
+    flights %&gt;% 
+      ddply(.variables = &quot;dest&quot;, 
+            .fun=function(x) mean(x$air_time, na.rm=TRUE), 
+            .parallel=TRUE)
+  }, 
+  times = 5
+)
+
+stopCluster(cluster_psock)
+stopCluster(cluster_fork)</code></pre>
+<pre><code>Unit: milliseconds
+         expr        min        lq       mean     median         uq       max neval
+ dplyr_serial   39.14037   39.6308   60.51139   39.91827   41.94427  141.9232     5
+  dplyr_psock 1007.31082 1301.6537 1393.16955 1366.20333 1409.68778 1880.9922     5
+   dplyr_fork  962.37095  985.1657 1005.70492 1013.73967 1022.19742 1045.0509     5
+  plyr_serial  370.86347  389.5137  397.98565  395.11678  416.63985  417.7944     5
+    plyr_fork  237.73061  248.6463  320.68526  336.84943  386.48719  393.7127     5</code></pre>
+<p>Takeaway message, the dplyr fork cluster is easier to use and slightly faster than it’s psock counterpart. Parallelization using <code>plyr</code> didn’t see the same parallelization overhead as <code>dplyr</code>, but was still almost 8 times slower than <code>dplyr</code> in serial mode.</p>
+<p>A good question is why does <code>dplyr</code> take so much longer than <code>plyr</code>’s fork cluster? If we look at the source code for <code>partition()</code>, it always transmits all of the data to the forked workers (even though they start with all of the data already!).</p>
+<p>Heres a similar duel between vectorized code, <code>purrr</code> in serial, <code>plyr</code> in serial, and <code>plyr</code> in parallel.</p>
+<pre class="r"><code>library(stringr)
+
+microbenchmark(
+  vectorized = str_detect(planes$model, &quot;737&quot;),
+  purrr_serial = {
+    planes$model %&gt;% 
+      map(~str_detect(.x, &quot;737&quot;))
+  },
+  plyr_serial = {
+    planes$model %&gt;% 
+      llply(.fun = function(x) str_detect(x, &quot;737&quot;))
+  },
+  plyr_fork = {
+    planes$model %&gt;% 
+      llply(.fun = function(x) str_detect(x, &quot;737&quot;), .parallel=TRUE)
+  }, 
+  times = 10
+)</code></pre>
+<pre><code>## Unit: microseconds
+##          expr         min          lq        mean       median          uq
+##    vectorized     828.928     835.395    1222.222     900.9915    1010.062
+##  purrr_serial   73294.095   76356.237   77538.150   77638.3970   79293.146
+##   plyr_serial   70992.463   75498.399   76703.794   77955.6490   78526.015
+##     plyr_fork 1017845.725 1034561.177 1065308.324 1057045.3445 1087653.916
+##          max neval
+##     4045.573    10
+##    80301.240    10
+##    80300.049    10
+##  1134339.878    10</code></pre>
+<p>Again, vectorized code is very, very fast. The takeaway here is that we should avoid complexity wherever possible: stick to vectorized code, and only parallelize if you absolutely have to. One other instersting finding is that <code>plyr::llply()</code> is just as fast as <code>purrr::map()</code>. Though <code>purrr</code> <a href="https://github.com/tidyverse/purrr/issues/121">cannot be parallelized at the moment</a>, this means we can still use <code>plyr::llply()</code> in parallel (and <code>llply()</code> does not suffer from any related performance hit).</p>
 </div>
 <div id="other-parallelization-methods" class="section level2">
 <h2>Other parallelization methods</h2>
@@ -235,8 +405,27 @@ results &lt;- flights %&gt;%
 </div>
 <div id="serial-farming-across-a-batch-computing-cluster" class="section level3">
 <h3>Serial farming across a batch computing cluster</h3>
-<p>The traditional HPC cluster manages workloads using a batch scheduler like SLURM. Essentially, users submit non-interactive batch job scripts to the scheduler, which decides where a user’s jobs get run. The cluster filesystem is shared across all nodes. Our workflow here would normally take one of two forms: “manually”, where we write chunks of our dataset to disk and then write a separate R job to analyze each chunk, or using some external automation tool like <a href="http://snakemake.readthedocs.io/en/stable/">Snakemake</a> or the <a href="https://github.com/tudo-r/BatchJobs">batchjobs</a>.</p>
+<p>The traditional HPC cluster manages workloads using a batch scheduler like SLURM. Essentially, users submit non-interactive batch job scripts to the scheduler, which decides where a user’s jobs get run. The cluster filesystem is shared across all nodes. Our workflow here would normally take one of two forms: “manually”, where we write chunks of our dataset to disk and then write a separate R job to analyze each chunk, and using an automation tool like <a href="http://snakemake.readthedocs.io/en/stable/">Snakemake</a> or the <a href="https://github.com/tudo-r/BatchJobs">batchjobs</a>.</p>
+<p>{{<admonition title="Exercise - Writing a command line R program"}}
+Typically, when running on the command line, 
+we want our R scripts to accept command line arguments 
+(like which data chunk to analyze).
+To do this, we use the `commandArgs()` function.
+
+
+```r
+args <- commandArgs(TRUE)
+```
+
+Write an R program that takes two numbers off of the command line and adds them
+together. You can run it with `Rscript yourScript.R arg1 arg2`.
+
+For more complex scenarios, I recommend looking into the `argparse` package.
+{{</admonition>}}</p>
 </div>
+</div>
+<div id="back-to-frontpage" class="section level2">
+<h2><a href="../">Back to frontpage</a></h2>
 </div>
 
 
