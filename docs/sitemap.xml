@@ -35,6 +35,14 @@
   </url>
   
   <url>
+    <loc>/hpc-r/optimization/</loc>
+  </url>
+  
+  <url>
+    <loc>/hpc-r/parallel/</loc>
+  </url>
+  
+  <url>
     <loc>/hpc-r/categories/</loc>
     <priority>0</priority>
   </url>

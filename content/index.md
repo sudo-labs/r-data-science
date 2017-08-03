@@ -6,10 +6,9 @@ weight: 1
 ---
 
 Although R is probably not the fastest language ever made, 
-it's one of the most effective data analysis tools out there.
+it sees a lot of use in scientific and data analysis applications.
 This tutorial focus on a number of techniques we can use to parallelize and speed 
-up our code, in addition to a couple other useful techniques we can use in our
-research. 
+up our code, in addition to a couple other useful techniques we can use in our work. 
 
 In particular, these materials combine a review of basic R syntax 
 and concepts with more advanced performance-related content. 
@@ -24,12 +23,9 @@ Topics covered include the following:
 
 * Basic R syntax and concepts
 * Doing work with the "tidyverse" packages (`dplyr`, `purrr`, `ggplot2`)
+* Measuring code performance
 * Common performance optimizations
-* Parallelization with `doParallel` and `plyr`
-* Parallelization of `dplyr` using `multidplyr`
-* Serial farming strategies
-* Making reproducible reports with `rmarkdown`
-* Writing R packages with `devtools`, `testthat`, and `roxygen2`
+* Parallelization with `doParallel`, `plyr`, and `multidplyr`
 
 ## Setup
 
