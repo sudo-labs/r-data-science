@@ -80,7 +80,9 @@ name &amp;lt;- function(reqd_arg, optional_arg=42) { # do stuff return(result) }
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/hpc-r/ggplot2/</guid>
-      <description>Though this is technically a course on high-performance computing. I would be doing newcomers a disservice if we did not at least quickly cover how plotting works in R. We’ll also be profiling some ggplot2 code in the next section as an example.</description>
+      <description>Though this is technically a course on high-performance computing. I would be doing newcomers a disservice if we did not at least quickly cover how plotting works in R. We’ll also be profiling some ggplot2 code in the next section as an example.
+ggplot2 is a plotting framework that is (relatively) easy to use, powerful, AND it looks good.
+library(ggplot2) # Load the example data data &amp;lt;- msleep str(data) ## Classes &amp;#39;tbl_df&amp;#39;, &amp;#39;tbl&amp;#39; and &amp;#39;data.</description>
     </item>
     
     <item>
