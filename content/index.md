@@ -1,36 +1,37 @@
 ---
-title: High-performance R
+title: Data Science with R 
 type: homepage
 menu: main
 weight: 1
 ---
 
-Although R is probably not the fastest language ever made, 
-it sees a lot of use in scientific and data analysis applications.
-This tutorial focus on a number of techniques we can use to parallelize and speed 
-up our code, in addition to a couple other useful techniques we can use in our work. 
+R is a programming language used to analyze data.
+That's all it's good for, and it does this one job very, very well.
+Any analysis you can think of can be done with R.
+Because of these features, 
+R has become a very popular tool for data science.
 
-In particular, these materials combine a review of basic R syntax 
-and concepts with more advanced performance-related content. 
-The goal of this format is two-fold:
-we want to make sure everyone is on the same page,
-and it ensures a relatively logical progression of concepts 
-(the alternative is to have two distinct lessons, 
-and have the difficulty level go from 0 to 9000 real fast).
-Hopefully these materials will be useful for R users of all levels.
+So what's "data science"?
+Long story short, 
+it's a buzzword used to describe the relatively new field
+of applied data analysis. 
+Our data often has valuable information to tell us. 
+Data science is the "science" of extracting these worthwhile insights from our data.
+This tutorial aims to teach the basics of data science: 
+loading data, performing statistics, and convey this information in a useful manner.
 
-Topics covered include the following:
+At the end of this tutorial, you'll know how to:
 
-* Basic R syntax and concepts
-* Doing work with the "tidyverse" packages (`dplyr`, `purrr`, `ggplot2`)
-* Measuring code performance
-* Common performance optimizations
-* Parallelization with `doParallel`, `plyr`, and `multidplyr`
+* Write and run R code.
+* Analyze data with `dplyr` and `purrr`.
+* Make sweet plots with `ggplot2`.
+* Write reports using R Markdown.
 
 ## Setup
 
 Before you start, make sure you have both [R](https://www.r-project.org/) and 
 [RStudio](https://www.rstudio.com/) installed and ready to go. 
+RStudio is a 
 
 You may also wish to install the [tidyverse](http://tidyverse.org/) packages
 with `install.packages("tidyverse")` beforehand. We'll be using them a lot.
@@ -44,3 +45,4 @@ as well as a lot of concepts from
 Hadley Wickham's "[Advanced R](http://adv-r.had.co.nz/)" book.
 
 # [Get started](./basics/)
+

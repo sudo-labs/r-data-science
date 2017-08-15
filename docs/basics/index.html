@@ -4,17 +4,17 @@
 	<head lang="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-	<meta name="description" content="Making your R code just a little bit faster...">
+	<meta name="description" content="Analyzing data with R">
 	<meta name="generator" content="Hugo 0.25.1" />
 	
-	<title>Basic Syntax &mdash; HPC R</title>
+	<title>Basic Syntax &mdash; Data Science with R</title>
 	
-	<link rel="stylesheet" href="/hpc-r/css/alabaster.css" type="text/css" />
-	<link rel="stylesheet" href="/hpc-r/css/highlight.css" type="text/css" />
+	<link rel="stylesheet" href="/r-data-science/css/alabaster.css" type="text/css" />
+	<link rel="stylesheet" href="/r-data-science/css/highlight.css" type="text/css" />
 
 	
 
-	<link rel="shortcut icon" href="/hpc-r/favicon.ico" type="image/x-icon"/>
+	<link rel="shortcut icon" href="/r-data-science/favicon.ico" type="image/x-icon"/>
 </head>
 
 	<body role="document">
@@ -99,8 +99,8 @@ weight_lb</code></pre>
 weight_lb</code></pre>
 <pre><code>## [1] 19800</code></pre>
 <p>We can contrast with how variable assignment works in Python and other languages: where there is a distinction between objects and primitives and assigning a new copy of an object just creates a link to the original set of data. R does not treat any variables differently from others. In R, whenever you assign a variable under a new name, it creates a copy of the orignal.</p>
-<div id="copy-on-modify" class="section level3">
-<h3>Copy-on-modify</h3>
+<div class="admonition note">
+<p class="first admonition-title">Copy-on-modify</p>
 <p>Or, that’s almost how it works. R uses a “copy-on-modify” behavior. Essentially whenever you assign a variable under a new name, it points at the old variable, and does not take up any extra space. However, as soon as you modify <em>anything</em> in the new variable, R will create a new copy.</p>
 <p>Let’s demonstrate this by example. If you want to follow along for this part, you will need to install the <code>pryr</code> package (<code>install.packages(&quot;pryr&quot;)</code>). Also, this will introduce a new function <code>library()</code> - this is used to load extra bits of functionality that is not included in the base R programming language.</p>
 <pre class="r"><code>var1 &lt;- 10
@@ -109,16 +109,16 @@ var2 &lt;- var1</code></pre>
 <p>Fortunately, the <code>pryr</code> package lets us take a closer look at R’s internal workings. The <code>address</code> function can be used to see the memory address of an R object.</p>
 <pre class="r"><code>library(pryr)
 address(var1)</code></pre>
-<pre><code>## [1] &quot;0x55d47f806318&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a1577bb988&quot;</code></pre>
 <pre class="r"><code>address(var2)</code></pre>
-<pre><code>## [1] &quot;0x55d47f806318&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a1577bb988&quot;</code></pre>
 <p>Without going into too much detail on how memory addresses and allocation works (it’s not important for writing R code), we can see that both <code>var1</code> and <code>var2</code> have the same address: they are stored in the same spot in your computer.</p>
 <p>What happens if we modify <code>var2</code>?</p>
 <pre class="r"><code>var2 &lt;- var1 + 1
 address(var1)</code></pre>
-<pre><code>## [1] &quot;0x55d47f806318&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a1577bb988&quot;</code></pre>
 <pre class="r"><code>address(var2)</code></pre>
-<pre><code>## [1] &quot;0x55d48074f028&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a158703368&quot;</code></pre>
 <p>The address has changed. After modifying <code>var2</code>, R realized that it could no longer store both variables in the same spot and made a new copy to store <code>var2</code> in.</p>
 <p>This copy-on-modify behavior has important implications for how we write R code. Don’t reassign variable names just because you want a new name for it. Every time you reassign a variable and modify it (even slightly), you force R to make a new copy, doubling it’s memory use. A smarter way of doing things (especially if you just need to modify a variable), is to do things “in-place”, or simply overwrite the original variable with its modified value.</p>
 <p><strong>Good example</strong></p>
@@ -127,6 +127,7 @@ var1 &lt;- var1 + 1</code></pre>
 <p><strong>Bad example</strong></p>
 <pre class="r"><code>var1 &lt;- 10
 var1_modified &lt;- var1 + 1</code></pre>
+<p></p>
 </div>
 </div>
 <div id="next-section" class="section level2">
@@ -143,13 +144,13 @@ var1_modified &lt;- var1 + 1</code></pre>
 			<div class="sphinxsidebar" role="navigation" aria-label="main navigation">
 	<div class="sphinxsidebarwrapper">
 		<p class="logo">
-			<a href="/hpc-r/">
-				<img class="logo" src="/hpc-r/favicon.ico" alt="Logo"/>
-				<h1 class="logo logo-name">HPC R</h1>
+			<a href="/r-data-science/">
+				<img class="logo" src="/r-data-science/favicon.ico" alt="Logo"/>
+				<h1 class="logo logo-name">R</h1>
 			</a>
 		</p>
 		
-		<p class="blurb">Making your R code just a little bit faster&hellip;</p>
+		<p class="blurb">Analyzing data with R</p>
 
 		
 
@@ -166,43 +167,43 @@ var1_modified &lt;- var1 + 1</code></pre>
 <ul>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/">High-performance R</a>
+		<a class="reference internal" href="/r-data-science/">Data Science with R</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/basics/">Basic Syntax</a>
+		<a class="reference internal" href="/r-data-science/basics/">Basic Syntax</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/vectors/">Vectors and indexing</a>
+		<a class="reference internal" href="/r-data-science/vectors/">Vectors and indexing</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/dataframes/">Dataframes</a>
+		<a class="reference internal" href="/r-data-science/dataframes/">Dataframes</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/dplyr/">Data analysis with dplyr</a>
+		<a class="reference internal" href="/r-data-science/dplyr/">Data analysis with dplyr</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/control/">Writing functions</a>
+		<a class="reference internal" href="/r-data-science/control/">Writing functions</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/ggplot2/">Pretty plots with ggplot2</a>
+		<a class="reference internal" href="/r-data-science/ggplot2/">Pretty plots with ggplot2</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/profiling/">Measuring code speed</a>
+		<a class="reference internal" href="/r-data-science/profiling/">Measuring code speed</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/optimization/">Performance optimization</a>
+		<a class="reference internal" href="/r-data-science/optimization/">Performance optimization</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/parallel/">Running code in parallel</a>
+		<a class="reference internal" href="/r-data-science/parallel/">Running code in parallel</a>
 	</li>
 	
 </ul>
@@ -215,7 +216,7 @@ var1_modified &lt;- var1 + 1</code></pre>
 <div class="clearer"></div>
 </div>
 			<div class="footer">
-	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
+	&copy; 2017 <a href="https://github.com/sudo-labs">Sudo Labs</a>
 	|
 	Powered by <a href="http://gohugo.io/">Hugo 0.25.1</a>
 	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>

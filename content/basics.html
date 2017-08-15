@@ -81,9 +81,7 @@ weight_lb</code></pre>
 weight_lb</code></pre>
 <pre><code>## [1] 19800</code></pre>
 <p>We can contrast with how variable assignment works in Python and other languages: where there is a distinction between objects and primitives and assigning a new copy of an object just creates a link to the original set of data. R does not treat any variables differently from others. In R, whenever you assign a variable under a new name, it creates a copy of the orignal.</p>
-<div id="copy-on-modify" class="section level3">
-<h3>Copy-on-modify</h3>
-<p>Or, that’s almost how it works. R uses a “copy-on-modify” behavior. Essentially whenever you assign a variable under a new name, it points at the old variable, and does not take up any extra space. However, as soon as you modify <em>anything</em> in the new variable, R will create a new copy.</p>
+<p>{{<admonition title="Copy-on-modify" type="note">}} Or, that’s almost how it works. R uses a “copy-on-modify” behavior. Essentially whenever you assign a variable under a new name, it points at the old variable, and does not take up any extra space. However, as soon as you modify <em>anything</em> in the new variable, R will create a new copy.</p>
 <p>Let’s demonstrate this by example. If you want to follow along for this part, you will need to install the <code>pryr</code> package (<code>install.packages(&quot;pryr&quot;)</code>). Also, this will introduce a new function <code>library()</code> - this is used to load extra bits of functionality that is not included in the base R programming language.</p>
 <pre class="r"><code>var1 &lt;- 10
 var2 &lt;- var1</code></pre>
@@ -91,16 +89,16 @@ var2 &lt;- var1</code></pre>
 <p>Fortunately, the <code>pryr</code> package lets us take a closer look at R’s internal workings. The <code>address</code> function can be used to see the memory address of an R object.</p>
 <pre class="r"><code>library(pryr)
 address(var1)</code></pre>
-<pre><code>## [1] &quot;0x55d47f806318&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a1577bb988&quot;</code></pre>
 <pre class="r"><code>address(var2)</code></pre>
-<pre><code>## [1] &quot;0x55d47f806318&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a1577bb988&quot;</code></pre>
 <p>Without going into too much detail on how memory addresses and allocation works (it’s not important for writing R code), we can see that both <code>var1</code> and <code>var2</code> have the same address: they are stored in the same spot in your computer.</p>
 <p>What happens if we modify <code>var2</code>?</p>
 <pre class="r"><code>var2 &lt;- var1 + 1
 address(var1)</code></pre>
-<pre><code>## [1] &quot;0x55d47f806318&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a1577bb988&quot;</code></pre>
 <pre class="r"><code>address(var2)</code></pre>
-<pre><code>## [1] &quot;0x55d48074f028&quot;</code></pre>
+<pre><code>## [1] &quot;0x55a158703368&quot;</code></pre>
 <p>The address has changed. After modifying <code>var2</code>, R realized that it could no longer store both variables in the same spot and made a new copy to store <code>var2</code> in.</p>
 <p>This copy-on-modify behavior has important implications for how we write R code. Don’t reassign variable names just because you want a new name for it. Every time you reassign a variable and modify it (even slightly), you force R to make a new copy, doubling it’s memory use. A smarter way of doing things (especially if you just need to modify a variable), is to do things “in-place”, or simply overwrite the original variable with its modified value.</p>
 <p><strong>Good example</strong></p>
@@ -109,7 +107,7 @@ var1 &lt;- var1 + 1</code></pre>
 <p><strong>Bad example</strong></p>
 <pre class="r"><code>var1 &lt;- 10
 var1_modified &lt;- var1 + 1</code></pre>
-</div>
+<p>{{</admonition>}}</p>
 </div>
 <div id="next-section" class="section level2">
 <h2><a href="../vectors/">Next Section</a></h2>

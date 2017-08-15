@@ -4,17 +4,17 @@
 	<head lang="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-	<meta name="description" content="Making your R code just a little bit faster...">
+	<meta name="description" content="Analyzing data with R">
 	<meta name="generator" content="Hugo 0.25.1" />
 	
-	<title> HPC R</title>
+	<title> Data Science with R</title>
 	
-	<link rel="stylesheet" href="/hpc-r/css/alabaster.css" type="text/css" />
-	<link rel="stylesheet" href="/hpc-r/css/highlight.css" type="text/css" />
+	<link rel="stylesheet" href="/r-data-science/css/alabaster.css" type="text/css" />
+	<link rel="stylesheet" href="/r-data-science/css/highlight.css" type="text/css" />
 
 	
 
-	<link rel="shortcut icon" href="/hpc-r/favicon.ico" type="image/x-icon"/>
+	<link rel="shortcut icon" href="/r-data-science/favicon.ico" type="image/x-icon"/>
 </head>
 
 	<body role="document">
@@ -24,37 +24,38 @@
 					<div class="body" role="main">
 						
 	
-		<h1>High-performance R</h1>
+		<h1>Data Science with R</h1>
 		
 
-<p>Although R is probably not the fastest language ever made,
-it sees a lot of use in scientific and data analysis applications.
-This tutorial focus on a number of techniques we can use to parallelize and speed
-up our code, in addition to a couple other useful techniques we can use in our work.</p>
+<p>R is a programming language used to analyze data.
+That&rsquo;s all it&rsquo;s good for, and it does this one job very, very well.
+Any analysis you can think of can be done with R.
+Because of these features,
+R has become a very popular tool for data science.</p>
 
-<p>In particular, these materials combine a review of basic R syntax
-and concepts with more advanced performance-related content.
-The goal of this format is two-fold:
-we want to make sure everyone is on the same page,
-and it ensures a relatively logical progression of concepts
-(the alternative is to have two distinct lessons,
-and have the difficulty level go from 0 to 9000 real fast).
-Hopefully these materials will be useful for R users of all levels.</p>
+<p>So what&rsquo;s &ldquo;data science&rdquo;?
+Long story short,
+it&rsquo;s a buzzword used to describe the relatively new field
+of applied data analysis.
+Our data often has valuable information to tell us.
+Data science is the &ldquo;science&rdquo; of extracting these worthwhile insights from our data.
+This tutorial aims to teach the basics of data science:
+loading data, performing statistics, and convey this information in a useful manner.</p>
 
-<p>Topics covered include the following:</p>
+<p>At the end of this tutorial, you&rsquo;ll know how to:</p>
 
 <ul>
-<li>Basic R syntax and concepts</li>
-<li>Doing work with the &ldquo;tidyverse&rdquo; packages (<code>dplyr</code>, <code>purrr</code>, <code>ggplot2</code>)</li>
-<li>Measuring code performance</li>
-<li>Common performance optimizations</li>
-<li>Parallelization with <code>doParallel</code>, <code>plyr</code>, and <code>multidplyr</code></li>
+<li>Write and run R code.</li>
+<li>Analyze data with <code>dplyr</code> and <code>purrr</code>.</li>
+<li>Make sweet plots with <code>ggplot2</code>.</li>
+<li>Write reports using R Markdown.</li>
 </ul>
 
 <h2 id="setup">Setup</h2>
 
 <p>Before you start, make sure you have both <a href="https://www.r-project.org/">R</a> and
-<a href="https://www.rstudio.com/">RStudio</a> installed and ready to go.</p>
+<a href="https://www.rstudio.com/">RStudio</a> installed and ready to go.
+RStudio is a</p>
 
 <p>You may also wish to install the <a href="http://tidyverse.org/">tidyverse</a> packages
 with <code>install.packages(&quot;tidyverse&quot;)</code> beforehand. We&rsquo;ll be using them a lot.</p>
@@ -80,13 +81,13 @@ Hadley Wickham&rsquo;s &ldquo;<a href="http://adv-r.had.co.nz/">Advanced R</a>&r
 			<div class="sphinxsidebar" role="navigation" aria-label="main navigation">
 	<div class="sphinxsidebarwrapper">
 		<p class="logo">
-			<a href="/hpc-r/">
-				<img class="logo" src="/hpc-r/favicon.ico" alt="Logo"/>
-				<h1 class="logo logo-name">HPC R</h1>
+			<a href="/r-data-science/">
+				<img class="logo" src="/r-data-science/favicon.ico" alt="Logo"/>
+				<h1 class="logo logo-name">R</h1>
 			</a>
 		</p>
 		
-		<p class="blurb">Making your R code just a little bit faster&hellip;</p>
+		<p class="blurb">Analyzing data with R</p>
 
 		
 
@@ -103,43 +104,43 @@ Hadley Wickham&rsquo;s &ldquo;<a href="http://adv-r.had.co.nz/">Advanced R</a>&r
 <ul>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/">High-performance R</a>
+		<a class="reference internal" href="/r-data-science/">Data Science with R</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/basics/">Basic Syntax</a>
+		<a class="reference internal" href="/r-data-science/basics/">Basic Syntax</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/vectors/">Vectors and indexing</a>
+		<a class="reference internal" href="/r-data-science/vectors/">Vectors and indexing</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/dataframes/">Dataframes</a>
+		<a class="reference internal" href="/r-data-science/dataframes/">Dataframes</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/dplyr/">Data analysis with dplyr</a>
+		<a class="reference internal" href="/r-data-science/dplyr/">Data analysis with dplyr</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/control/">Writing functions</a>
+		<a class="reference internal" href="/r-data-science/control/">Writing functions</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/ggplot2/">Pretty plots with ggplot2</a>
+		<a class="reference internal" href="/r-data-science/ggplot2/">Pretty plots with ggplot2</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/profiling/">Measuring code speed</a>
+		<a class="reference internal" href="/r-data-science/profiling/">Measuring code speed</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/optimization/">Performance optimization</a>
+		<a class="reference internal" href="/r-data-science/optimization/">Performance optimization</a>
 	</li>
 	
 	<li class="toctree-l1">
-		<a class="reference internal" href="/hpc-r/parallel/">Running code in parallel</a>
+		<a class="reference internal" href="/r-data-science/parallel/">Running code in parallel</a>
 	</li>
 	
 </ul>
@@ -152,7 +153,7 @@ Hadley Wickham&rsquo;s &ldquo;<a href="http://adv-r.had.co.nz/">Advanced R</a>&r
 <div class="clearer"></div>
 </div>
 			<div class="footer">
-	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
+	&copy; 2017 <a href="https://github.com/sudo-labs">Sudo Labs</a>
 	|
 	Powered by <a href="http://gohugo.io/">Hugo 0.25.1</a>
 	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>

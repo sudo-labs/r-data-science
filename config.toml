@@ -1,7 +1,7 @@
-baseurl = "https://jstaf.github.io/hpc-r/"
+baseurl = "https://sudo-labs.github.io/r-data-science/"
 languageCode = "en-us"
 metadataformat = "yaml"
-title = "HPC R"
+title = "Data Science with R"
 theme = "hugo-alabaster-theme"
 publishDir = "docs"
 
@@ -9,11 +9,11 @@ disqusShortname = ""
 googleAnalytics = ""
 
 [params]
-	name = "HPC R"
-	description = "Making your R code just a little bit faster..."
+	name = "R"
+	description = "Analyzing data with R"
 
-	github_user   = "jstaf"
-	github_repo   = "hpc-r"
+	github_user   = "sudo-labs"
+	github_repo   = "r-data-science"
 	github_banner = false
 
 	custom_css = []
@@ -34,5 +34,6 @@ googleAnalytics = ""
 	show_relations = false
 
 [params.footer]
-	copyright = "[Jeff Stafford](https://github.com/jstaf)"
+	copyright = "[Sudo Labs](https://github.com/sudo-labs)"
 	show_powered_by = true
+

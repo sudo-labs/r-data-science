@@ -3,57 +3,57 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/hpc-r/</loc>
+    <loc>/r-data-science/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/basics/</loc>
+    <loc>/r-data-science/basics/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/vectors/</loc>
+    <loc>/r-data-science/vectors/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/dataframes/</loc>
+    <loc>/r-data-science/dataframes/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/dplyr/</loc>
+    <loc>/r-data-science/dplyr/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/control/</loc>
+    <loc>/r-data-science/control/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/ggplot2/</loc>
+    <loc>/r-data-science/ggplot2/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/profiling/</loc>
+    <loc>/r-data-science/profiling/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/optimization/</loc>
+    <loc>/r-data-science/optimization/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/parallel/</loc>
+    <loc>/r-data-science/parallel/</loc>
   </url>
   
   <url>
-    <loc>/hpc-r/categories/</loc>
+    <loc>/r-data-science/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/hpc-r/</loc>
+    <loc>/r-data-science/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/hpc-r/tags/</loc>
+    <loc>/r-data-science/tags/</loc>
     <priority>0</priority>
   </url>
   

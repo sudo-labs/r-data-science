@@ -281,15 +281,5 @@ See if you can make the following expressions work:
 `"4" + 10` - Get 5 as a result.
 {{</admonition>}}
 
-{{<admonition title="Exercise - Data sizes">}}
-In many programming languages, different types of data take up different amounts of memory. 
-Is this true in R?
-
-You can check how big an object is in memory using the `object_size()` function from the `pryr` package.
-Are there any memory optimizations to be had from converting a
-vector of numberic values to a vector of integers?
-Why or why not?
-{{</admonition>}}
-
 ## [Next section](../dataframes/)
 
