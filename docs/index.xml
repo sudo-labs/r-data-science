@@ -85,37 +85,5 @@ ggplot2 is a plotting framework that is (relatively) easy to use, powerful, AND 
 library(ggplot2) # Load the example data data &amp;lt;- msleep str(data) ## Classes &amp;#39;tbl_df&amp;#39;, &amp;#39;tbl&amp;#39; and &amp;#39;data.</description>
     </item>
     
-    <item>
-      <title>Measuring code speed</title>
-      <link>/r-data-science/profiling/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/r-data-science/profiling/</guid>
-      <description>Comparing code speed The base R language is very, very slow. However, a lot of the packages and functions in R have been written in C/C++/Fortran and are very, very fast. So depending on what functions we use to do things, we can get significantly faster performance. Of course, this depends on us being able to measure how fast our code is in the first place.</description>
-    </item>
-    
-    <item>
-      <title>Performance optimization</title>
-      <link>/r-data-science/optimization/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/r-data-science/optimization/</guid>
-      <description>Now that we know how to measure our code speed, we can focus on making it faster. We’ve actually covered a number of important performance optimizations already.
-To recap:
- Avoid memory bloat and costly reassignment by doing things in-place: do not create unnecessary variables.
- Factors are an efficent way of saving memory when working with repetitive strings.
- Avoid indexing out-of-bounds. We’ll cover another variant of this here as well.</description>
-    </item>
-    
-    <item>
-      <title>Running code in parallel</title>
-      <link>/r-data-science/parallel/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/r-data-science/parallel/</guid>
-      <description>Like the majority of programming languages, R runs on one CPU core by default. All modern CPUs have multiple cores. This means that there is typically spare computing power that goes unused when we run R. Using our other CPUs is often a very cheap way of making our code run faster. However, it is not the be all end all of getting better performance.
-In most cases, the number of CPUs on a system is rather limited.</description>
-    </item>
-    
   </channel>
 </rss>

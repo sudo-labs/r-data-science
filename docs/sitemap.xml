@@ -31,18 +31,6 @@
   </url>
   
   <url>
-    <loc>/r-data-science/profiling/</loc>
-  </url>
-  
-  <url>
-    <loc>/r-data-science/optimization/</loc>
-  </url>
-  
-  <url>
-    <loc>/r-data-science/parallel/</loc>
-  </url>
-  
-  <url>
     <loc>/r-data-science/categories/</loc>
     <priority>0</priority>
   </url>

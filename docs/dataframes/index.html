@@ -140,47 +140,6 @@ class(new_cats$coat)</code></pre>
 ## )</code></pre>
 <pre class="r"><code>class(even_newer_cats$coat)</code></pre>
 <pre><code>## [1] &quot;character&quot;</code></pre>
-<div id="performance-considerations" class="section level3">
-<h3>Performance considerations</h3>
-<p>As you can see, factors can be kind of a pain to deal with. So why do they even exist? The short answer is that they are an effective way of optimizing memory usage.</p>
-<p>To demonstrate this, we’ll examine the gapminder example dataset (<code>install.packages(&quot;gapminder&quot;)</code>).</p>
-<pre class="r"><code>library(gapminder)
-head(gapminder)</code></pre>
-<pre><code>## # A tibble: 6 x 6
-##       country continent  year lifeExp      pop gdpPercap
-##        &lt;fctr&gt;    &lt;fctr&gt; &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-## 1 Afghanistan      Asia  1952  28.801  8425333  779.4453
-## 2 Afghanistan      Asia  1957  30.332  9240934  820.8530
-## 3 Afghanistan      Asia  1962  31.997 10267083  853.1007
-## 4 Afghanistan      Asia  1967  34.020 11537966  836.1971
-## 5 Afghanistan      Asia  1972  36.088 13079460  739.9811
-## 6 Afghanistan      Asia  1977  38.438 14880372  786.1134</code></pre>
-<pre class="r"><code>str(gapminder)</code></pre>
-<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    1704 obs. of  6 variables:
-##  $ country  : Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
-##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
-##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
-##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
-##  $ gdpPercap: num  779 821 853 836 740 ...</code></pre>
-<p>Notice how <code>gapminder</code> contains several columns with a lot of highly repetitive data. For instance, the <code>continent</code> column contains only 5 values:</p>
-<pre class="r"><code>unique(gapminder$continent)</code></pre>
-<pre><code>## [1] Asia     Europe   Africa   Americas Oceania 
-## Levels: Africa Americas Asia Europe Oceania</code></pre>
-<p>In this case, <code>gapminder$continent</code> has been stored as a factor. Let’s examine the amount of space used if this column was stored as a character vector vs. storing the data as a factor.</p>
-<pre class="r"><code>library(pryr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;pryr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:purrr&#39;:
-## 
-##     compose, partial</code></pre>
-<pre class="r"><code>object_size(gapminder$continent)</code></pre>
-<pre><code>## 7.51 kB</code></pre>
-<pre class="r"><code>object_size(as.character(gapminder$continent))</code></pre>
-<pre><code>## 13.9 kB</code></pre>
-<p>The character version of <code>gapminder$continent</code> takes up almost twice as much space! Storing things as one of several possible integer values behind the scenes is a lot more efficient than storing the entire set of text for every single entry. Note that the amount of memory saved depends on the repetitiveness of the data. If a column has a lot of unique text values, converting it to a factor will likely be of little benefit.</p>
-<p>The takeaway here is that if you ever find yourself working on a large dataset and memory usage becomes an issue, converting your most repetitive string columns to factors can be a useful way to save space. Otherwise, just use character vectors (less hidden “gotchas” that way).</p>
-</div>
 </div>
 <div id="next-section" class="section level2">
 <h2><a href="../dplyr/">Next section</a></h2>
@@ -244,18 +203,6 @@ head(gapminder)</code></pre>
 	
 	<li class="toctree-l1">
 		<a class="reference internal" href="/r-data-science/ggplot2/">Pretty plots with ggplot2</a>
-	</li>
-	
-	<li class="toctree-l1">
-		<a class="reference internal" href="/r-data-science/profiling/">Measuring code speed</a>
-	</li>
-	
-	<li class="toctree-l1">
-		<a class="reference internal" href="/r-data-science/optimization/">Performance optimization</a>
-	</li>
-	
-	<li class="toctree-l1">
-		<a class="reference internal" href="/r-data-science/parallel/">Running code in parallel</a>
 	</li>
 	
 </ul>

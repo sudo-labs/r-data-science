@@ -182,52 +182,5 @@ even_newer_cats <- read_csv('cats.csv')
 class(even_newer_cats$coat)
 ```
 
-### Performance considerations
-
-As you can see, factors can be kind of a pain to deal with.
-So why do they even exist?
-The short answer is that they are an effective way of optimizing memory usage.
-
-To demonstrate this,
-we'll examine the gapminder example dataset (`install.packages("gapminder")`).
-
-```{r}
-library(gapminder)
-head(gapminder)
-str(gapminder)
-```
-
-Notice how `gapminder` contains several columns with a lot of highly repetitive data.
-For instance, the `continent` column contains only 5 values:
-
-```{r}
-unique(gapminder$continent)
-```
-
-In this case, `gapminder$continent` has been stored as a factor.
-Let's examine the amount of space used if this column was 
-stored as a character vector vs. 
-storing the data as a factor.
-
-```{r}
-library(pryr)
-object_size(gapminder$continent)
-object_size(as.character(gapminder$continent))
-```
-
-The character version of `gapminder$continent` takes up almost twice
-as much space!
-Storing things as one of several possible integer values behind the scenes
-is a lot more efficient than storing the entire set of text for every single entry.
-Note that the amount of memory saved depends on the repetitiveness of the data.
-If a column has a lot of unique text values, converting it to a factor
-will likely be of little benefit.
-
-The takeaway here is that
-if you ever find yourself working on a large dataset and memory usage becomes an issue,
-converting your most repetitive string columns to factors 
-can be a useful way to save space.
-Otherwise, just use character vectors (less hidden "gotchas" that way).
-
 ## [Next section](../dplyr/)
 
