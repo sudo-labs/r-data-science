@@ -4,6 +4,7 @@ metadataformat = "yaml"
 title = "Data Science with R"
 theme = "hugo-alabaster-theme"
 publishDir = "docs"
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 disqusShortname = ""
 googleAnalytics = ""

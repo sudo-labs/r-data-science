@@ -54,7 +54,7 @@ ref &lt;- ggplot(data, aes(x = bodywt, y = sleep_total))
 ref &lt;- ggplot(data, aes(x = data$bodywt, y = data$sleep_total))</code></pre>
 <p>To store an object (to add to it later/plot it on demand), just give it a reference. Simply typing the reference will display the plot (if you’ve provided enough information to make it.)</p>
 <pre class="r"><code>ref</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>As you can see, we haven’t specified everything we need yet. There are 3 components to making a plot with a ggplot object: your data, the aesthetic mappings of your data, and the geometry. If you are missing one, you won’t get a functional plot.</p>
 <p>Your data should be a dataframe with everything you want to plot. Note that it is possible to put data from multiple sources (ie. different dataframes) in the same plot, but it’s easier if everything is in the same 2-dimensional dataframe.</p>
 <pre><code>ref &lt;- ggplot(data)</code></pre>
@@ -64,15 +64,15 @@ ref &lt;- ggplot(data, aes(x = data$bodywt, y = data$sleep_total))</code></pre>
 <p>Just add the geometry you want to your object. In this case, we are making a scatterplot.</p>
 <pre class="r"><code>ref &lt;- ggplot(data, aes(x = bodywt, y = sleep_total)) + geom_point()
 ref</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>All you need to do to add more information to your plot/change things is add on more elements. Lets add a logarithmic scale on the x axis.</p>
 <pre class="r"><code>ref &lt;- ggplot(data, aes(x = bodywt, y = sleep_total)) + geom_point() + scale_x_log10()
 ref</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>Lets add a smoothed mean.</p>
 <pre class="r"><code>ref + geom_smooth()</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39;</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>You can also specify aesthetics inside the call to create geomtery.</p>
 <pre class="r"><code>ggplot(data) + geom_point(aes(x = bodywt, y = sleep_total)) + scale_x_log10() + geom_smooth()</code></pre>
 <pre><code>Error: stat_smooth requires the following missing aesthetics: x, y</code></pre>
@@ -82,12 +82,12 @@ ref</code></pre>
   geom_point(aes(x = bodywt, y = sleep_total)) +
   geom_smooth(aes(x = bodywt, y = sleep_total))</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39;</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>It’s important to note that geometry will automatically use any aesthetic mappings that it understands, and ignore ones it doesn’t. So if you specify as much stuff as you can in the inital call that can be used, it’ll save you work.</p>
 <p>Like this:</p>
 <pre class="r"><code>ggplot(data, aes(x = bodywt, y = sleep_total)) + scale_x_log10() + geom_point() + geom_smooth()</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39;</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <div class="admonition ">
 <p class="first admonition-title">Exercise - Creating a plot of our own</p>
 <p>Make a scatterplot of conservation status vs. time spent awake</p>
@@ -97,29 +97,29 @@ ref</code></pre>
 <p>These x and y mappings (and the log scale on the x axis will be used for all later plots).</p>
 <pre class="r"><code>plot &lt;- ggplot(data, aes(x = bodywt, y = sleep_total)) + scale_x_log10()
 plot + geom_point()</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>First lets add color based on what things eat. Note that it automatically adds a legend.</p>
 <pre class="r"><code>plot + geom_point(aes(color = vore))</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>We used a factor there, but we can also use a continuous variable for color as well.</p>
 <pre class="r"><code>plot + geom_point(aes(color = log(brainwt)))</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>We can change the legend to change the colors in this case.</p>
 <pre class="r"><code>plot + geom_point(aes(color = log(brainwt))) + scale_color_gradient2()</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Set the limits of a scale</p>
 <pre class="r"><code>plot + geom_point() + scale_y_continuous(limits = c(5, 15))</code></pre>
 <pre><code>## Warning: Removed 23 rows containing missing values (geom_point).</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>Changing size and alpha works the same way:</p>
 <pre class="r"><code>plot + geom_point(aes(size = sleep_rem, alpha = sleep_rem)) + 
   xlab(&quot;this is our x axis&quot;) + ylab(&quot;this is our y axis&quot;) + ggtitle(&quot;title&quot;) + scale_alpha(&quot;our legend&quot;)</code></pre>
 <pre><code>## Warning: Removed 22 rows containing missing values (geom_point).</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>If we want to simply change a plot value like marker shape or size without mapping it to data, just specify it outside the call to aesthetics. plot + geom_point(aes(shape = vore), size = 6, color = “orange”)</p>
 <p>Let’s facet our data by a factor:</p>
 <pre class="r"><code>plot + geom_point() + facet_wrap(~vore)</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <div class="admonition ">
 <p class="first admonition-title">Exercise - Another plot example</p>
 <p></p>
@@ -132,28 +132,29 @@ plot + geom_point()</code></pre>
 <h3>Boxplot</h3>
 <p>Note that stats are automatically performed.</p>
 <pre class="r"><code>ggplot(data, aes(x = vore, y = sleep_total, fill = vore)) + geom_boxplot()</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 <div id="line-plot-with-different-groups" class="section level3">
 <h3>Line plot with different groups</h3>
 <pre class="r"><code>ggplot(data, aes(x = bodywt, y = brainwt, group = vore, color = vore)) +
   geom_line() + scale_x_log10() + scale_y_log10()</code></pre>
 <pre><code>## Warning: Removed 8 rows containing missing values (geom_path).</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 <div id="d-density" class="section level3">
 <h3>1D density</h3>
 <pre class="r"><code>ggplot(data, aes(x = sleep_total, fill = vore)) + geom_density(alpha = 0.5)</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 <div id="violin-plot" class="section level3">
 <h3>Violin plot</h3>
-<p>ggplot(data, aes(x = vore, y = sleep_total)) + geom_violin()</p>
+<pre class="r"><code>ggplot(data, aes(x = vore, y = sleep_total)) + geom_violin()</code></pre>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
 <div id="bar-plot" class="section level3">
 <h3>Bar plot</h3>
 <pre class="r"><code>ggplot(data, aes(x = vore)) + geom_bar()</code></pre>
-<p><img src="content/ggplot2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="/r-data-science/ggplot2_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>Note that it automatically is binning the number of values in “vore”. To get a bar plot to simply plot the values you feed it, use <code>geom_bar(stat = &quot;identity&quot;)</code>.</p>
 <div class="admonition ">
 <p class="first admonition-title">Exercise - making other types of plots</p>
@@ -163,7 +164,7 @@ plot + geom_point()</code></pre>
 </div>
 </div>
 <div id="next-section" class="section level2">
-<h2><a href="../profiling/">Next section</a></h2>
+<h2><a href="../rmarkdown/">Next section</a></h2>
 </div>
 
 
@@ -224,6 +225,10 @@ plot + geom_point()</code></pre>
 	
 	<li class="toctree-l1">
 		<a class="reference internal" href="/r-data-science/ggplot2/">Pretty plots with ggplot2</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/r-data-science/rmarkdown/">Reports with R Markdown</a>
 	</li>
 	
 </ul>

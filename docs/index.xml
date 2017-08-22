@@ -85,5 +85,14 @@ ggplot2 is a plotting framework that is (relatively) easy to use, powerful, AND 
 library(ggplot2) # Load the example data data &amp;lt;- msleep str(data) ## Classes &amp;#39;tbl_df&amp;#39;, &amp;#39;tbl&amp;#39; and &amp;#39;data.</description>
     </item>
     
+    <item>
+      <title>Reports with R Markdown</title>
+      <link>/r-data-science/rmarkdown/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/r-data-science/rmarkdown/</guid>
+      <description>Making plots and being able to write output files is important. However, the most important part of any analysis is communicating your findings effectively! The rmarkdown package is one of the best and easiest ways of doing this. It let’s you create a fancy looking report without ever leaving RStudio. You can interleave your code and plots together with explanation text and formatting you might normally do in a tool like Microsoft Word.</description>
+    </item>
+    
   </channel>
 </rss>

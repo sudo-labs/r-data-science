@@ -1,0 +1,163 @@
+---
+title: "Reports with R Markdown"
+weight: 8 
+menu: main
+---
+
+
+
+<p>Making plots and being able to write output files is important. However, the most important part of any analysis is communicating your findings effectively! The <code>rmarkdown</code> package is one of the best and easiest ways of doing this. It let’s you create a fancy looking report without ever leaving RStudio. You can interleave your code and plots together with explanation text and formatting you might normally do in a tool like Microsoft Word. You can even make websites with it (like this one!)!</p>
+<p>Let’s get started with R Markdown and make ourselves a sweet report.</p>
+<div id="creating-an-r-markdown-notebook" class="section level2">
+<h2>Creating an R Markdown notebook</h2>
+<p>In RStudio, go to File -&gt; New File -&gt; R Markdown. It will ask you what you want to call the file - leave the output as HTML for now.</p>
+<p>You should see a file open with a lot of text and code already there. This is the default R Markdown document and comes with a lot of pointers about how to do things. For now, save the file as <code>example.Rmd</code>, and hit the “Knit” button.</p>
+<p>If everything went well, you should see a nicely formatted webpage/ report pop up in RStudio’s built-in browser. Congratulations, you’ve made your first report!</p>
+</div>
+<div id="basic-formatting" class="section level2">
+<h2>Basic formatting</h2>
+<p>Now that we know everything’s working, let’s start from scratch and learn how R Markdown works step-by-step. The first thing we should do is delete everything except for the following:</p>
+<pre><code>---
+title: &quot;test&quot;
+author: &quot;Jeff Stafford&quot;
+date: &quot;August 20, 2017&quot;
+output: html_document
+---</code></pre>
+<p>The stuff between the <code>---</code>s is called YAML - it’s a markup format that describes what kind of document to make, who wrote it, and other technical bits that’s not actual content in your report. If you want, you can modify it, but let’s leave it be for now.</p>
+<p>At the bottom of the document, let’s start typing some text. Everything that follows is example markdown output and syntax:</p>
+<p>Normal characters result in normal text.</p>
+<p><em> *this makes italics* </em></p>
+<p><strong> **big bad bold text** </strong></p>
+<p><strong><em> ***italic AND bold*** </em></strong></p>
+</div>
+<div id="a-header" class="section level1">
+<h1># A header</h1>
+<div id="a-smaller-header" class="section level2">
+<h2>## A smaller header</h2>
+<div id="an-even-smaller-header" class="section level3">
+<h3>### An even smaller header</h3>
+<p>Horizontal lines can be made with lots of dashes. Like this:</p>
+<p>----------------------</p>
+<hr />
+<p>To start a list, we can use asterisks:</p>
+<ul>
+<li>* Item one</li>
+<li>* Item two</li>
+<li>* Item three
+<ul>
+<li>indenting four spaces makes a nested list</li>
+</ul></li>
+</ul>
+<p>We can make a numbered list by just typing 1. 2. 3.</p>
+<ol style="list-style-type: decimal">
+<li>first</li>
+<li>second</li>
+<li>third</li>
+</ol>
+<p>To make a block of code-y looking text, we use backticks:</p>
+<p>`<code>some code</code>`</p>
+<p>```</p>
+<pre><code>Three backticks makes
+a block of text 
+look the same way.</code></pre>
+<p>```</p>
+<p>A hyperlink looks like <code>[link text](www.some-website.ca)</code></p>
+<p>Images are just a link with an <code>!</code> in front:</p>
+<p><code>![image text](www.some-image-site/image.png)</code></p>
+<p>{{<admonition title="Some notes on formatting" type="note">}} Text on subsequent lines gets treated as the same line. To have text appear in a separate line/paragraph, you need a blank line in between. {{</admonition>}}</p>
+</div>
+</div>
+<div id="including-code-data-and-plots" class="section level2">
+<h2>Including code, data, and plots</h2>
+<p>To include code in a report, we just change the “code” styling slightly. Add a <code>{r}</code> after the triple backticks to have that block of text get treated as R code. The top of the code header should look like this: <code>```{r}</code></p>
+<p>In practice, it looks something like this:</p>
+<pre class="r"><code>5 + 6</code></pre>
+<pre><code>## [1] 11</code></pre>
+<pre class="r"><code>print(&quot;The code output gets put directly below&quot;)</code></pre>
+<pre><code>## [1] &quot;The code output gets put directly below&quot;</code></pre>
+<p>If you want to display data, you have a couple options. The first, is just to print out data the way you normally would.</p>
+<pre class="r"><code>library(gapminder)
+head(gapminder)</code></pre>
+<pre><code>##       country continent year lifeExp      pop gdpPercap
+## 1 Afghanistan      Asia 1952  28.801  8425333  779.4453
+## 2 Afghanistan      Asia 1957  30.332  9240934  820.8530
+## 3 Afghanistan      Asia 1962  31.997 10267083  853.1007
+## 4 Afghanistan      Asia 1967  34.020 11537966  836.1971
+## 5 Afghanistan      Asia 1972  36.088 13079460  739.9811
+## 6 Afghanistan      Asia 1977  38.438 14880372  786.1134</code></pre>
+<p>However, there is a special function <code>knitr::kable()</code> that inserts a nice-looking table into your report. Depending on what your output format is, it sometimes is even interactive!</p>
+<pre class="r"><code>knitr::kable(head(gapminder))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">country</th>
+<th align="left">continent</th>
+<th align="right">year</th>
+<th align="right">lifeExp</th>
+<th align="right">pop</th>
+<th align="right">gdpPercap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Afghanistan</td>
+<td align="left">Asia</td>
+<td align="right">1952</td>
+<td align="right">28.801</td>
+<td align="right">8425333</td>
+<td align="right">779.4453</td>
+</tr>
+<tr class="even">
+<td align="left">Afghanistan</td>
+<td align="left">Asia</td>
+<td align="right">1957</td>
+<td align="right">30.332</td>
+<td align="right">9240934</td>
+<td align="right">820.8530</td>
+</tr>
+<tr class="odd">
+<td align="left">Afghanistan</td>
+<td align="left">Asia</td>
+<td align="right">1962</td>
+<td align="right">31.997</td>
+<td align="right">10267083</td>
+<td align="right">853.1007</td>
+</tr>
+<tr class="even">
+<td align="left">Afghanistan</td>
+<td align="left">Asia</td>
+<td align="right">1967</td>
+<td align="right">34.020</td>
+<td align="right">11537966</td>
+<td align="right">836.1971</td>
+</tr>
+<tr class="odd">
+<td align="left">Afghanistan</td>
+<td align="left">Asia</td>
+<td align="right">1972</td>
+<td align="right">36.088</td>
+<td align="right">13079460</td>
+<td align="right">739.9811</td>
+</tr>
+<tr class="even">
+<td align="left">Afghanistan</td>
+<td align="left">Asia</td>
+<td align="right">1977</td>
+<td align="right">38.438</td>
+<td align="right">14880372</td>
+<td align="right">786.1134</td>
+</tr>
+</tbody>
+</table>
+<p>You can put code inline in text by just typing “r some code” in backtics.</p>
+<p>Plots are done the same way as code:</p>
+<pre class="r"><code>library(ggplot2)
+ggplot(gapminder, aes(x=year, y=lifeExp, group=year)) +
+    geom_boxplot()</code></pre>
+<p><img src="/r-data-science/rmarkdown_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>{{<admonition title="Exercise - Writing your own report">}} Using any dataset you want, find something interesting and write a report on it in RMarkdown (<code>nycflights13</code> is a good starting point). {{</admonition>}}</p>
+</div>
+<div id="back-to-homepage" class="section level2">
+<h2><a href="../">Back to homepage</a></h2>
+</div>
+</div>

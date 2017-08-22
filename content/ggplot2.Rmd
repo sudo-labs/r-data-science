@@ -219,9 +219,13 @@ ggplot(data, aes(x = sleep_total, fill = vore)) + geom_density(alpha = 0.5)
 ```
 
 ###Violin plot
+
+```{r}
 ggplot(data, aes(x = vore, y = sleep_total)) + geom_violin()
+```
 
 ###Bar plot 
+
 ```{r}
 ggplot(data, aes(x = vore)) + geom_bar()
 ```
@@ -239,5 +243,5 @@ Hint: you will need the following aesthetics: x, y, and fill. The geometry you
 want to use is `geom_boxplot()`
 {{</admonition>}}
 
-## [Next section](../profiling/)
+## [Next section](../rmarkdown/)
 

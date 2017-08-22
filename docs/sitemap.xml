@@ -31,6 +31,10 @@
   </url>
   
   <url>
+    <loc>/r-data-science/rmarkdown/</loc>
+  </url>
+  
+  <url>
     <loc>/r-data-science/categories/</loc>
     <priority>0</priority>
   </url>
