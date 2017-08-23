@@ -3,6 +3,8 @@
 A set of online lesson materials for Sudo's "Data Science with R" workshop.
 This is an R Markdown website built with the [blogdown](https://github.com/rstudio/blogdown) package.
 
+The website is hosted at https://sudo-labs.github.io/r-data-science/.
+
 ## Building the website
 
 Before you build anything, make sure you've got the following dependencies installed:
