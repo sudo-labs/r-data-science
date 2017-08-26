@@ -3,9 +3,11 @@
 /* -- page layout ----------------------------------------------------------- */
 
 body {
-    font-family: 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;
-    font-size: 17px;
-    background-color: white;
+    /*font-family: 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;*/
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: #F9F9F9;
+    /*background-color: white;*/
     color: #000;
     margin: 0;
     padding: 0;
@@ -27,6 +29,7 @@ div.bodywrapper {
 
 div.sphinxsidebar {
     width: 220px;
+
 }
 
 hr {
@@ -36,7 +39,7 @@ hr {
 div.body {
     background-color: #ffffff;
     color: #3E4349;
-    padding: 0 30px 0 30px;
+    padding: 30px;
 }
 
 div.body > .section {
@@ -62,18 +65,25 @@ div.relations {
 
 
 div.sphinxsidebar a {
-    color: #444;
+    /*color: rgba(255, 255, 255, 0.9);*/
     text-decoration: none;
-    border-bottom: 1px dotted #999;
+    border-bottom: 1px dotted #DE5086;
 }
 
 div.sphinxsidebar a:hover {
-    border-bottom: 1px solid #999;
+    /*color: #ffffff;*/
+    border-bottom: 1px solid #DE5086;
 }
 
 div.sphinxsidebar {
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 12.5px;
+    line-height: 2;
+    /*background: #FFFFFF;*/
+    /*background: -webkit-linear-gradient(left top, #ED7A87, #DE5086); 
+    background: -o-linear-gradient(bottom right, #ED7A87, #DE5086);
+    background: -moz-linear-gradient(bottom right, #ED7A87, #DE5086);
+    background: linear-gradient(to bottom right, #ED7A87, #DE5086);
+    color: #FFFFFF !important;*/
 }
 
 div.sphinxsidebarwrapper {
@@ -93,6 +103,11 @@ div.sphinxsidebarwrapper h1.logo {
     text-align: center;
 }
 
+div.sphinxsidebarwrapper h1.logo a {
+    /*color: #FFFFFF;*/
+    border: none;    
+} 
+
 div.sphinxsidebarwrapper h1.logo-name {
     margin-top: 0px;
 }
@@ -104,10 +119,10 @@ div.sphinxsidebarwrapper p.blurb {
 
 div.sphinxsidebar h3,
 div.sphinxsidebar h4 {
-    font-family: 'Garamond', 'Georgia', serif;
-    color: #444;
-    font-size: 24px;
-    font-weight: normal;
+    /*font-family: 'Garamond', 'Georgia', serif;*/
+    color: #000000;
+    font-size: 28px;
+    font-weight: bold;
     margin: 0 0 5px 0;
     padding: 0;
 }
@@ -117,7 +132,7 @@ div.sphinxsidebar h4 {
 }
 
 div.sphinxsidebar h3 a {
-    color: #444;
+    color: #000000;
 }
 
 div.sphinxsidebar p.logo a,
@@ -128,14 +143,14 @@ div.sphinxsidebar h3 a:hover {
 }
 
 div.sphinxsidebar p {
-    color: #555;
+    color: #000000;
     margin: 10px 0;
 }
 
 div.sphinxsidebar ul {
     margin: 10px 0;
     padding: 0;
-    color: #000;
+    color: #000000;
 }
 
 div.sphinxsidebar ul li.toctree-l1 > a {
@@ -148,14 +163,14 @@ div.sphinxsidebar ul li.toctree-l2 > a {
 
 div.sphinxsidebar input {
     border: 1px solid #CCC;
-    font-family: 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;
+    /*font-family: 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;*/
     font-size: 1em;
 }
 
 div.sphinxsidebar hr {
     border: none;
     height: 1px;
-    color: #AAA;
+    color: #FFFFFF;
     background: #AAA;
 
     text-align: left;
@@ -166,12 +181,13 @@ div.sphinxsidebar hr {
 /* -- body styles ----------------------------------------------------------- */
 
 a {
-    color: #3782BE;
-    text-decoration: underline;
+    color: #DE5086;
+    text-decoration: none;
 }
 
+
 a:hover {
-    color: #3782BE;
+    color: #DE5086;
     text-decoration: underline;
 }
 
@@ -181,18 +197,20 @@ div.body h3,
 div.body h4,
 div.body h5,
 div.body h6 {
-    font-family: 'Garamond', 'Georgia', serif;
-    font-weight: normal;
+    /*font-family: 'Garamond', 'Georgia', serif;*/
+    font-weight: bold;
     margin: 30px 0px 10px 0px;
     padding: 0;
+    color: #000000
+    ;
 }
 
-div.body h1 { margin-top: 0; padding-top: 0; font-size: 240%; }
-div.body h2 { font-size: 180%; }
-div.body h3 { font-size: 150%; }
-div.body h4 { font-size: 130%; }
-div.body h5 { font-size: 100%; }
-div.body h6 { font-size: 100%; }
+div.body h1 { margin-top: 0; padding-top: 0; font-size: 2em; color: #DE5086; }
+div.body h2 { font-size: 1.6em; }
+div.body h3 { font-size: 1.4em; }
+div.body h4 { font-size: 1.2em; }
+div.body h5 { font-size: 1.1em; }
+div.body h6 { font-size: 1em; }
 
 a.headerlink {
     color: #DDD;
@@ -211,8 +229,8 @@ div.body p, div.body dd, div.body li {
 
 div.admonition {
     margin: 20px 0px;
-    padding: 10px 30px;
-    background-color: #FCC;
+    padding: 20px 30px;
+    background-color: rgba(237,122,135, 0.7);
     border: 1px solid #FAA;
 }
 
@@ -226,8 +244,9 @@ dd div.admonition {
 }
 
 div.admonition p.admonition-title {
-    font-family: 'Garamond', 'Georgia', serif;
+    /*font-family: 'Garamond', 'Georgia', serif;*/
     font-weight: normal;
+    color: #000000;
     font-size: 24px;
     margin: 0 0 10px 0;
     padding: 0;
